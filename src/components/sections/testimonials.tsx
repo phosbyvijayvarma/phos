@@ -54,7 +54,7 @@ export function TestimonialsSection() {
           </div>
 
           {/* Client Info */}
-          <div className="flex flex-col items-center gap-4 mt-12 pt-8 border-t border-white/10">
+          {/* <div className="flex flex-col items-center gap-4 mt-12 pt-8 border-t border-white/10">
             <div className="relative w-20 h-20 rounded-full overflow-hidden">
               <img
                 src={current.image}
@@ -66,7 +66,7 @@ export function TestimonialsSection() {
               <p className="text-white font-light text-lg">{current.name}</p>
               <p className="text-white/50 text-sm font-light">{current.role}</p>
             </div>
-          </div>
+          </div> */}
 
           {/* Navigation Buttons */}
           <div className="flex justify-center gap-6 mt-12">

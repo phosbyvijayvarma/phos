@@ -41,7 +41,7 @@ export const TESTIMONIALS = [
     name: 'Anjali & Rohan',
     role: 'Wedding Couple',
     image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&q=80',
-    content: 'Phos by Vijayvarma captured our wedding day with such passion and discipline. Every frame tells our love story beautifully.',
+    content: 'Hey vijay,We took one of the  best decision for our marriage is your photography , which we are much more  impressed with your patience, skills and enthusiasm towards your passion regarding photography.',
     rating: 5,
   },
   {
@@ -49,15 +49,7 @@ export const TESTIMONIALS = [
     name: 'Priya Sharma',
     role: 'Bride',
     image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&q=80',
-    content: 'The team was professional, creative, and made us feel so comfortable. The photos are absolutely stunning and treasured.',
-    rating: 5,
-  },
-  {
-    id: 3,
-    name: 'Vikram Patel',
-    role: 'Event Client',
-    image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&q=80',
-    content: 'Amazing work capturing our special moments. The attention to detail and cinematic approach is exceptional.',
+    content: 'Have seen your growth in photography. You had a great ability in capturing the special moments beautifully during the occassion which becomes the lifelong memory. Your editing skills are top notch. Keep growing and all the best😊👍',
     rating: 5,
   },
 ];
