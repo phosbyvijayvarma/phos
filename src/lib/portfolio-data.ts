@@ -8,11 +8,6 @@ export const PORTFOLIO_CATEGORIES = [
     "image": "/Haldi/DSC00090.jpg"
   },
   {
-    "id": "half-saree",
-    "name": "Half Saree",
-    "image": "/Half%20saree%20/DSC_4346.jpg"
-  },
-  {
     "id": "potraits",
     "name": "Potraits",
     "image": "/Potraits/DSC00083.jpg"
@@ -126,90 +121,6 @@ export const PORTFOLIO_IMAGES = [
     "src": "/Haldi/DSC08872.jpg",
     "thumb": "/Haldi/DSC08872.jpg",
     "title": "Haldi DSC08872.jpg"
-  },
-  {
-    "id": 12,
-    "category": "half-saree",
-    "src": "/Half%20saree%20/DSC_4346.jpg",
-    "thumb": "/Half%20saree%20/DSC_4346.jpg",
-    "title": "Half Saree DSC_4346.jpg"
-  },
-  {
-    "id": 13,
-    "category": "half-saree",
-    "src": "/Half%20saree%20/DSC_4354.jpg",
-    "thumb": "/Half%20saree%20/DSC_4354.jpg",
-    "title": "Half Saree DSC_4354.jpg"
-  },
-  {
-    "id": 14,
-    "category": "half-saree",
-    "src": "/Half%20saree%20/DSC_4371.jpg",
-    "thumb": "/Half%20saree%20/DSC_4371.jpg",
-    "title": "Half Saree DSC_4371.jpg"
-  },
-  {
-    "id": 15,
-    "category": "half-saree",
-    "src": "/Half%20saree%20/DSC_4383.jpg",
-    "thumb": "/Half%20saree%20/DSC_4383.jpg",
-    "title": "Half Saree DSC_4383.jpg"
-  },
-  {
-    "id": 16,
-    "category": "half-saree",
-    "src": "/Half%20saree%20/DSC_4397.jpg",
-    "thumb": "/Half%20saree%20/DSC_4397.jpg",
-    "title": "Half Saree DSC_4397.jpg"
-  },
-  {
-    "id": 17,
-    "category": "half-saree",
-    "src": "/Half%20saree%20/DSC_4430.jpg",
-    "thumb": "/Half%20saree%20/DSC_4430.jpg",
-    "title": "Half Saree DSC_4430.jpg"
-  },
-  {
-    "id": 18,
-    "category": "half-saree",
-    "src": "/Half%20saree%20/DSC_4457.jpg",
-    "thumb": "/Half%20saree%20/DSC_4457.jpg",
-    "title": "Half Saree DSC_4457.jpg"
-  },
-  {
-    "id": 19,
-    "category": "half-saree",
-    "src": "/Half%20saree%20/DSC_4565.jpg",
-    "thumb": "/Half%20saree%20/DSC_4565.jpg",
-    "title": "Half Saree DSC_4565.jpg"
-  },
-  {
-    "id": 20,
-    "category": "half-saree",
-    "src": "/Half%20saree%20/DSC_4606.jpg",
-    "thumb": "/Half%20saree%20/DSC_4606.jpg",
-    "title": "Half Saree DSC_4606.jpg"
-  },
-  {
-    "id": 21,
-    "category": "half-saree",
-    "src": "/Half%20saree%20/DSC_4634.jpg",
-    "thumb": "/Half%20saree%20/DSC_4634.jpg",
-    "title": "Half Saree DSC_4634.jpg"
-  },
-  {
-    "id": 22,
-    "category": "half-saree",
-    "src": "/Half%20saree%20/DSC_4670.jpg",
-    "thumb": "/Half%20saree%20/DSC_4670.jpg",
-    "title": "Half Saree DSC_4670.jpg"
-  },
-  {
-    "id": 23,
-    "category": "half-saree",
-    "src": "/Half%20saree%20/DSC_4840.jpg",
-    "thumb": "/Half%20saree%20/DSC_4840.jpg",
-    "title": "Half Saree DSC_4840.jpg"
   },
   {
     "id": 24,
