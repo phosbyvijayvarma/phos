@@ -10,12 +10,14 @@ import { TestimonialsSection } from '@/components/sections/testimonials';
 import { ContactSection } from '@/components/sections/contact';
 import { Footer } from '@/components/sections/footer';
 import { WhatsAppChatButton } from '@/components/ui/whatsapp-chat-button';
+import { SEO } from '@/components/seo';
 
 export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   return (
     <main className="overflow-hidden">
+      <SEO />
       <Navbar />
       <HeroSection />
       <CategoriesSection

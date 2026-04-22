@@ -42,11 +42,21 @@ export function HeroSection() {
                 className="h-50 w-auto rounded-full object-cover"
               />
             </div>
+            <p className="text-xs uppercase tracking-[0.4em] text-white/45">
+              PHOS BY VIJAYVARMA
+            </p>
+            <h1 className="mt-5 text-4xl font-semibold leading-tight text-white sm:text-5xl lg:text-6xl">
+              Wedding, Portrait & Event Photography
+            </h1>
             <p className="mt-6 text-base text-white/70 sm:text-lg lg:text-xl">
               {SITE_TAGLINE}
             </p>
+            <p className="mt-6 text-sm leading-7 text-white/60 sm:text-base">
+              Cinematic storytelling for weddings, pre-wedding shoots, haldi, sangeeth, portraits,
+              and milestone events captured with emotion and detail.
+            </p>
             <p className="mt-6 text-sm uppercase tracking-[0.35em] text-white/40">
-              Cinematic photography for weddings, portraits, and events.
+              Premium visual stories crafted for timeless memories.
             </p>
           </div>
         </div>
@@ -69,7 +79,7 @@ export function HeroSection() {
               >
                 <img
                   src={item.image}
-                  alt={item.title}
+                  alt={`${item.title} photography by PHOS BY VIJAYVARMA`}
                   className="h-full w-full object-cover"
                   loading={index === currentSlide ? 'eager' : 'lazy'}
                 />
