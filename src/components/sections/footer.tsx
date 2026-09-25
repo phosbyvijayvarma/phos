@@ -1,5 +1,6 @@
-import { SITE_NAME, FOOTER_LINKS, SOCIAL_LINKS } from '@/lib/constants';
-import { Facebook, Instagram, Linkedin, Youtube } from 'lucide-react';
+import { CONTACT, FOOTER_LINKS, SITE_NAME, SOCIAL_LINKS, SITE_TAGLINE } from '@/lib/constants';
+import { Facebook, Instagram, Linkedin, Mail, Phone, Youtube } from 'lucide-react';
+import { PhosLogo } from '@/components/brand/phos-logo';
 
 const ICON_MAP = {
   Instagram: Instagram,
@@ -8,64 +9,53 @@ const ICON_MAP = {
   YouTube: Youtube,
 };
 
+function LinkColumn({ title, links }: { title: string; links: { label: string; href: string }[] }) {
+  return (
+    <div>
+      <h4 className="mb-4 text-xs uppercase tracking-widest text-white">{title}</h4>
+      <ul className="space-y-3">
+        {links.map((link) => (
+          <li key={link.href}>
+            <a href={link.href} className="text-sm text-white/50 transition-colors hover:text-brand-glow">
+              {link.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 export function Footer() {
   return (
-    <footer className="bg-black border-t border-white/10 py-16 md:py-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Main Footer Content */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
-          {/* Brand */}
-          <div>
-            <img
-              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/InShot_20250915_143819957.jpg%20%281%29-x1U8iTJpD9G3Q5zKgcndpwcKnrEMgW.jpeg"
-              alt="PHOS by Vijay Varma"
-              width={250}
-              height={150}
-              className="h-10 w-auto mb-4"
-            />
-            <p className="text-white/50 font-light text-sm leading-relaxed">
-              Capturing universal emotions in a unique way. Cinematic wedding photography and videography with passion and discipline.
-            </p>
+    <footer className="border-t border-white/10 bg-black pb-24 pt-16 sm:pb-16">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="mb-12 grid grid-cols-2 gap-10 md:grid-cols-4">
+          <div className="col-span-2 md:col-span-1">
+            <a href="#home" className="inline-block text-[44px]" aria-label="Back to top">
+              <PhosLogo withByline />
+            </a>
+            <p className="mt-6 text-sm leading-relaxed text-white/50">{SITE_TAGLINE}.</p>
           </div>
 
-          {/* Services Links */}
-          <div>
-            <h4 className="text-white font-light mb-4 uppercase tracking-widest text-xs">Services</h4>
-            <ul className="space-y-3">
-              {FOOTER_LINKS.services.map((link) => (
-                <li key={link.href}>
-                  <a
-                    href={link.href}
-                    className="text-white/50 hover:text-white transition-colors text-sm font-light"
-                  >
-                    {link.label}
-                  </a>
-                </li>
-              ))}
+          <LinkColumn title="Explore" links={FOOTER_LINKS.explore} />
+          <LinkColumn title="Studio" links={FOOTER_LINKS.company} />
+
+          <div className="col-span-2 md:col-span-1">
+            <h4 className="mb-4 text-xs uppercase tracking-widest text-white">Get in touch</h4>
+            <ul className="space-y-3 text-sm">
+              <li>
+                <a href={CONTACT.phoneHref} className="flex items-center gap-2 text-white/50 hover:text-brand-glow">
+                  <Phone className="h-4 w-4" /> {CONTACT.phone}
+                </a>
+              </li>
+              <li>
+                <a href={`mailto:${CONTACT.email}`} className="flex items-center gap-2 break-all text-white/50 hover:text-brand-glow">
+                  <Mail className="h-4 w-4 shrink-0" /> {CONTACT.email}
+                </a>
+              </li>
             </ul>
-          </div>
-
-          {/* Company Links */}
-          <div>
-            <h4 className="text-white font-light mb-4 uppercase tracking-widest text-xs">Company</h4>
-            <ul className="space-y-3">
-              {FOOTER_LINKS.company.map((link) => (
-                <li key={link.href}>
-                  <a
-                    href={link.href}
-                    className="text-white/50 hover:text-white transition-colors text-sm font-light"
-                  >
-                    {link.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Social Links */}
-          <div>
-            <h4 className="text-white font-light mb-4 uppercase tracking-widest text-xs">Follow</h4>
-            <div className="flex gap-4">
+            <div className="mt-5 flex gap-3">
               {SOCIAL_LINKS.map((link) => {
                 const Icon = ICON_MAP[link.platform as keyof typeof ICON_MAP];
                 return (
@@ -74,10 +64,10 @@ export function Footer() {
                     href={link.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-white/50 hover:text-white transition-colors"
+                    className="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 text-white/60 transition hover:border-brand hover:text-brand-glow"
                     aria-label={link.platform}
                   >
-                    <Icon className="w-5 h-5" />
+                    <Icon className="h-4 w-4" />
                   </a>
                 );
               })}
@@ -85,17 +75,11 @@ export function Footer() {
           </div>
         </div>
 
-        {/* Divider */}
-        <div className="border-t border-white/10 my-12" />
-
-        {/* Bottom Footer */}
-        <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-white/40 text-xs font-light">
+        <div className="flex flex-col items-center justify-between gap-3 border-t border-white/10 pt-8 text-xs text-white/40 md:flex-row">
+          <p>
             &copy; {new Date().getFullYear()} {SITE_NAME}. All rights reserved.
           </p>
-          <p className="text-white/40 text-xs font-light">
-            Cinematic wedding photography &amp; visual storytelling
-          </p>
+          <p>Cinematic wedding photography &amp; visual storytelling</p>
         </div>
       </div>
     </footer>

@@ -1,6 +1,22 @@
 export const SITE_NAME = 'PHOS BY VIJAYVARMA';
 export const SITE_TAGLINE = 'Capturing Universal Emotions in a Unique Way';
 
+export const CONTACT = {
+  phone: '+91 7799558146',
+  phoneHref: 'tel:+917799558146',
+  whatsapp: '917799558146',
+  email: 'phosbyvijayvarma@gmail.com',
+  instagramHandle: '@phos_by__vijayvarma',
+  instagram: 'https://www.instagram.com/phos_by__vijayvarma',
+  youtube: 'https://www.youtube.com/@phosbyvijayvarma',
+};
+
+export const BRAND_IMAGE = '/brand/phos-vijay-varma.jpg';
+
+export function whatsappLink(message = 'Hi! I am interested in your photography services.') {
+  return `https://wa.me/${CONTACT.whatsapp}?text=${encodeURIComponent(message)}`;
+}
+
 export const COLORS = {
   black: '#000000',
   charcoal: '#0a0a0a',
@@ -55,15 +71,15 @@ export const TESTIMONIALS = [
 ];
 
 export const FOOTER_LINKS = {
-  services: [
-    { label: 'Weddings', href: '#wedding' },
-    { label: 'Portraits', href: '#portrait' },
-    { label: 'Events', href: '#events' },
+  explore: [
+    { label: 'Portfolio', href: '#portfolio' },
+    { label: 'Films', href: '#videos' },
+    { label: 'Packages', href: '#services' },
   ],
   company: [
     { label: 'About', href: '#about' },
-    { label: 'Services', href: '#services' },
-    { label: 'Contact', href: '#contact' },
+    { label: 'Reviews', href: '#reviews' },
+    { label: 'Book a Shoot', href: '#contact' },
   ],
 };
 

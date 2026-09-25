@@ -1,7 +1,6 @@
-import { useState } from 'react';
+import { MotionConfig } from 'framer-motion';
 import { Navbar } from '@/components/sections/navbar';
 import { HeroSection } from '@/components/sections/hero';
-import { CategoriesSection } from '@/components/sections/categories';
 import { PortfolioGallerySection } from '@/components/sections/portfolio-gallery';
 import LatestVideos from '@/components/sections/video-reels';
 import { AboutSection } from '@/components/sections/about';
@@ -11,30 +10,29 @@ import { ContactSection } from '@/components/sections/contact';
 import { Footer } from '@/components/sections/footer';
 import { WhatsAppChatButton } from '@/components/ui/whatsapp-chat-button';
 import { SEO } from '@/components/seo';
+import { FilmStripSection } from '@/components/sections/film-strip';
+import { ShutterIntro } from '@/components/motion/shutter-intro';
+import { FocusCursor } from '@/components/motion/focus-cursor';
 
 export default function Home() {
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-
   return (
-    <main className="overflow-hidden">
-      <SEO />
-      <Navbar />
-      <HeroSection />
-      <CategoriesSection
-        selectedCategory={selectedCategory}
-        onSelectCategory={(categoryId) => setSelectedCategory(categoryId)}
-      />
-      <PortfolioGallerySection
-        selectedCategory={selectedCategory}
-        onSelectCategory={(categoryId) => setSelectedCategory(categoryId)}
-      />
-      <LatestVideos />
-      <AboutSection />
-      <ServicesSection />
-      <TestimonialsSection />
-      <ContactSection />
-      <Footer />
-      <WhatsAppChatButton />
-    </main>
+    <MotionConfig reducedMotion="user">
+      <main className="overflow-x-clip">
+        <SEO />
+        <Navbar />
+        <HeroSection />
+        <FilmStripSection />
+        <PortfolioGallerySection />
+        <LatestVideos />
+        <AboutSection />
+        <ServicesSection />
+        <TestimonialsSection />
+        <ContactSection />
+        <Footer />
+        <WhatsAppChatButton />
+        <FocusCursor />
+        <ShutterIntro />
+      </main>
+    </MotionConfig>
   );
 }

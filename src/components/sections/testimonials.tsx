@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, Star } from 'lucide-react';
 import { TESTIMONIALS } from '@/lib/constants';
+import { Reveal3D } from '@/components/motion/reveal-3d';
 
 export function TestimonialsSection() {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -18,24 +19,20 @@ export function TestimonialsSection() {
   const current = TESTIMONIALS[currentIndex];
 
   return (
-    <section className="py-20 md:py-32 bg-black">
+    <section id="reviews" className="py-20 md:py-28 bg-black">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="mb-20">
-          <h2 className="text-5xl md:text-6xl font-serif font-light text-white mb-6 tracking-wider">
-            Testimonials
-          </h2>
-          <p className="text-sm text-white/50 font-light uppercase tracking-widest">
-            What our clients say
-          </p>
-        </div>
+        <Reveal3D className="mb-14 text-center">
+          <p className="text-xs uppercase tracking-[0.4em] text-brand">Reviews</p>
+          <h2 className="mt-4 font-serif text-4xl text-white md:text-5xl">Kind words from our couples</h2>
+        </Reveal3D>
 
         {/* Testimonial Carousel */}
         <div className="relative">
           {/* Testimonial Content */}
           <div className="text-center">
             {/* Quote Mark */}
-            <div className="text-7xl text-white/20 mb-8 font-serif">"</div>
+            <div className="text-7xl text-brand/40 mb-8 font-serif">&ldquo;</div>
 
             {/* Testimonial Text */}
             <p className="text-2xl md:text-3xl text-white/90 font-light leading-relaxed mb-12">
@@ -47,7 +44,7 @@ export function TestimonialsSection() {
               {Array.from({ length: current.rating }).map((_, i) => (
                 <Star
                   key={i}
-                  className="w-5 h-5 fill-white text-white"
+                  className="w-5 h-5 fill-brand text-brand"
                 />
               ))}
             </div>
@@ -74,6 +71,7 @@ export function TestimonialsSection() {
               variant="ghost"
               size="icon"
               onClick={handlePrevious}
+              aria-label="Previous review"
               className="text-white/50 hover:text-white border border-white/20 hover:border-white/50 rounded-full w-12 h-12 transition-smooth"
             >
               <ChevronLeft className="w-5 h-5" />
@@ -82,6 +80,7 @@ export function TestimonialsSection() {
               variant="ghost"
               size="icon"
               onClick={handleNext}
+              aria-label="Next review"
               className="text-white/50 hover:text-white border border-white/20 hover:border-white/50 rounded-full w-12 h-12 transition-smooth"
             >
               <ChevronRight className="w-5 h-5" />
@@ -96,7 +95,7 @@ export function TestimonialsSection() {
               key={index}
               onClick={() => setCurrentIndex(index)}
               className={`w-2 h-2 rounded-full transition-colors ${
-                index === currentIndex ? 'bg-white' : 'bg-white/30 hover:bg-white/50'
+                index === currentIndex ? 'bg-brand' : 'bg-white/30 hover:bg-white/50'
               }`}
               aria-label={`Go to testimonial ${index + 1}`}
             />

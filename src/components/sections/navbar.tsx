@@ -1,84 +1,146 @@
-
 import { useState, useEffect } from 'react';
-import { Menu, X } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Menu, MessageCircle, Phone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { SITE_NAME } from '@/lib/constants';
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { PhosLogo } from '@/components/brand/phos-logo';
+import { CONTACT, whatsappLink } from '@/lib/constants';
 
 const NAV_LINKS = [
-  { label: 'Home', href: '#home' },
   { label: 'Portfolio', href: '#portfolio' },
+  { label: 'Films', href: '#videos' },
   { label: 'About', href: '#about' },
+  { label: 'Packages', href: '#services' },
+  { label: 'Reviews', href: '#reviews' },
   { label: 'Contact', href: '#contact' },
 ];
+
+function useActiveSection(ids: string[]) {
+  const [active, setActive] = useState<string | null>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) setActive(entry.target.id);
+        });
+      },
+      { rootMargin: '-45% 0px -50% 0px' },
+    );
+    ids.forEach((id) => {
+      const element = document.getElementById(id);
+      if (element) observer.observe(element);
+    });
+    return () => observer.disconnect();
+  }, [ids]);
+
+  return active;
+}
+
+const SECTION_IDS = ['home', ...NAV_LINKS.map((link) => link.href.slice(1))];
 
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const active = useActiveSection(SECTION_IDS);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
-
-    window.addEventListener('scroll', handleScroll);
+    const handleScroll = () => setIsScrolled(window.scrollY > 50);
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   return (
     <nav
-      className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-        isScrolled ? 'bg-black/90 backdrop-blur-md border-b border-white/10' : 'bg-transparent'
+      className={`fixed top-0 z-50 w-full transition-all duration-300 ${
+        isScrolled ? 'border-b border-white/10 bg-black/85 backdrop-blur-md' : 'bg-transparent'
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-        {/* Logo */}
-        <a href="#" className="flex items-center gap-2">
-          <img
-            src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/InShot_20250915_143819957.jpg%20%281%29-x1U8iTJpD9G3Q5zKgcndpwcKnrEMgW.jpeg"
-            alt="PHOS by Vijay Varma"
-            width={150}
-            height={50}
-            className="h-12 w-auto"
-          />
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+        <a href="#home" className="text-[34px]" aria-label="PHOS by Vijay Varma, back to top">
+          <PhosLogo />
         </a>
 
         {/* Desktop Menu */}
-        <div className="hidden md:flex items-center gap-10">
-          {NAV_LINKS.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              className="text-xs font-light tracking-widest text-white/70 hover:text-white transition-colors duration-300 uppercase"
-            >
-              {link.label}
-            </a>
-          ))}
+        <div className="hidden items-center gap-1 lg:flex">
+          {NAV_LINKS.map((link) => {
+            const isActive = active === link.href.slice(1);
+            return (
+              <a
+                key={link.href}
+                href={link.href}
+                aria-current={isActive ? 'true' : undefined}
+                className={`relative px-4 py-2 text-xs uppercase tracking-widest transition-colors duration-300 ${
+                  isActive ? 'text-white' : 'text-white/60 hover:text-white'
+                }`}
+              >
+                {link.label}
+                {isActive && (
+                  <motion.span
+                    layoutId="nav-underline"
+                    className="absolute inset-x-4 -bottom-0.5 h-px bg-brand shadow-[0_0_8px_var(--brand)]"
+                  />
+                )}
+              </a>
+            );
+          })}
         </div>
 
-        {/* Mobile Menu */}
-        <div className="md:hidden">
-          <Sheet open={isOpen} onOpenChange={setIsOpen}>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="text-white hover:text-white/80">
-                <Menu className="w-6 h-6" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="right" className="bg-black border-l border-white/10">
-              <div className="flex flex-col gap-6 mt-8">
-                {NAV_LINKS.map((link) => (
+        <div className="flex items-center gap-2">
+          <a
+            href="#contact"
+            className="hidden rounded-full bg-brand px-5 py-2.5 text-xs font-semibold uppercase tracking-widest text-black shadow-[0_0_24px_rgba(47,155,255,0.35)] transition hover:bg-brand-glow sm:inline-flex"
+          >
+            Book Now
+          </a>
+
+          {/* Mobile Menu */}
+          <div className="lg:hidden">
+            <Sheet open={isOpen} onOpenChange={setIsOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="text-white hover:bg-white/10 hover:text-white" aria-label="Open menu">
+                  <Menu className="h-6 w-6" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="flex flex-col border-l border-white/10 bg-black px-6">
+                <SheetTitle className="sr-only">Menu</SheetTitle>
+                <div className="mt-6 text-[40px]">
+                  <PhosLogo withByline />
+                </div>
+                <div className="mt-10 flex flex-col">
+                  {NAV_LINKS.map((link) => (
+                    <a
+                      key={link.href}
+                      href={link.href}
+                      onClick={() => setIsOpen(false)}
+                      className={`border-b border-white/10 py-4 text-base uppercase tracking-widest transition-colors ${
+                        active === link.href.slice(1) ? 'text-brand' : 'text-white hover:text-white/80'
+                      }`}
+                    >
+                      {link.label}
+                    </a>
+                  ))}
+                </div>
+                <div className="mt-auto grid grid-cols-2 gap-3 pb-8">
                   <a
-                    key={link.href}
-                    href={link.href}
-                    onClick={() => setIsOpen(false)}
-                    className="text-lg font-light tracking-widest text-white hover:text-white/80 transition-colors uppercase"
+                    href={CONTACT.phoneHref}
+                    className="flex items-center justify-center gap-2 rounded-full border border-white/20 py-3 text-xs uppercase tracking-widest text-white"
                   >
-                    {link.label}
+                    <Phone className="h-4 w-4" /> Call
                   </a>
-                ))}
-              </div>
-            </SheetContent>
-          </Sheet>
+                  <a
+                    href={whatsappLink()}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2 rounded-full bg-[#25D366] py-3 text-xs font-semibold uppercase tracking-widest text-black"
+                  >
+                    <MessageCircle className="h-4 w-4" /> WhatsApp
+                  </a>
+                </div>
+              </SheetContent>
+            </Sheet>
+          </div>
         </div>
       </div>
     </nav>

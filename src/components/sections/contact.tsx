@@ -1,148 +1,135 @@
+import { useState, type FormEvent } from 'react';
+import { Instagram, Mail, MessageCircle, Phone, Send } from 'lucide-react';
+import { Reveal3D } from '@/components/motion/reveal-3d';
+import { CONTACT, whatsappLink } from '@/lib/constants';
 
-import { Button } from '@/components/ui/button';
-import { Mail, MapPin, Phone, MessageCircle, Clock, CalendarDays, Sparkles } from 'lucide-react';
+const EVENT_TYPES = [
+  'Wedding',
+  'Pre-wedding shoot',
+  'Haldi / Sangeeth',
+  'Engagement',
+  'Baby / Kids portraits',
+  'Portraits / Makeover',
+  'Other event',
+];
+
+const QUICK_CONTACTS = [
+  { icon: Phone, label: 'Call us', value: CONTACT.phone, href: CONTACT.phoneHref },
+  { icon: Mail, label: 'Email', value: CONTACT.email, href: `mailto:${CONTACT.email}` },
+  { icon: Instagram, label: 'Instagram', value: CONTACT.instagramHandle, href: CONTACT.instagram, external: true },
+];
+
+const inputClass =
+  'w-full rounded-xl border border-white/15 bg-white/[0.04] px-4 py-3 text-white placeholder:text-white/35 outline-none transition focus:border-brand focus:bg-white/[0.06] focus:ring-2 focus:ring-brand/30';
 
 export function ContactSection() {
-  const whatsappNumber = '917799558146';
-  const whatsappMessage = 'Hi! I am interested in booking your photography services. My event date is [your date], and I would like more details.';
-  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`;
-  const whatsappQr = `https://api.qrserver.com/v1/create-qr-code/?size=260x260&data=${encodeURIComponent(whatsappUrl)}`;
+  const [form, setForm] = useState({ name: '', eventType: EVENT_TYPES[0], date: '', location: '', notes: '' });
+
+  const update = (field: keyof typeof form) => (event: { target: { value: string } }) =>
+    setForm((prev) => ({ ...prev, [field]: event.target.value }));
+
+  const handleSubmit = (event: FormEvent) => {
+    event.preventDefault();
+    const lines = [
+      `Hi PHOS! I'd like to book a shoot.`,
+      `Name: ${form.name}`,
+      `Event: ${form.eventType}`,
+      form.date && `Date: ${form.date}`,
+      form.location && `Location: ${form.location}`,
+      form.notes && `Details: ${form.notes}`,
+    ].filter(Boolean);
+    window.open(whatsappLink(lines.join('\n')), '_blank', 'noopener,noreferrer');
+  };
+
+  const whatsappQr = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=8&data=${encodeURIComponent(whatsappLink())}`;
 
   return (
-    <section id="contact" className="py-20 md:py-32 bg-black">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
-        <div className="mb-20">
-          <h2 className="text-5xl md:text-6xl font-serif font-light text-white mb-6 tracking-wider">
-            Book Your Shoot
-          </h2>
-          <p className="text-sm text-white/50 font-light uppercase tracking-widest">
-            Secure your date with PHOS BY VIJAYVARMA and capture every emotion in timeless frames.
+    <section id="contact" className="relative overflow-hidden bg-black py-20 md:py-28">
+      <div aria-hidden className="pointer-events-none absolute -bottom-40 left-1/2 h-[60vmin] w-[90vmin] -translate-x-1/2 rounded-full bg-brand/10 blur-[120px]" />
+
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <Reveal3D className="mb-12 text-center">
+          <p className="text-xs uppercase tracking-[0.4em] text-brand">Book a shoot</p>
+          <h2 className="mt-4 font-serif text-4xl text-white md:text-5xl">Let&apos;s capture your day</h2>
+          <p className="mx-auto mt-4 max-w-xl text-white/60">
+            Share a few details and we&apos;ll confirm availability and pricing on WhatsApp.
           </p>
-        </div>
+        </Reveal3D>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
-          {/* Booking Details */}
-          <div className="space-y-10">
-            <div>
-              <h3 className="text-xl font-serif font-light text-white mb-4 tracking-wider">Booking Details</h3>
-              <p className="text-white/60 font-light leading-relaxed">
-                Start with a quick message on WhatsApp and we&apos;ll guide you through availability, pricing, and creative planning.
-              </p>
-            </div>
-
-            <div className="space-y-6">
-              <div className="flex items-start gap-4">
-                <CalendarDays className="w-5 h-5 text-white/40 mt-1 flex-shrink-0" />
-                <div>
-                  <p className="text-white text-sm font-light uppercase tracking-widest mb-2">Available Events</p>
-                  <p className="text-white/70 font-light leading-relaxed">
-                    Weddings, pre-wedding shoots, engagements, portraits, corporate events, and special ceremonies.
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-4">
-                <Clock className="w-5 h-5 text-white/40 mt-1 flex-shrink-0" />
-                <div>
-                  <p className="text-white text-sm font-light uppercase tracking-widest mb-2">Booking Process</p>
-                  <p className="text-white/70 font-light leading-relaxed">
-                    Send your event date, location, and photography needs. We&apos;ll share a tailored proposal and confirm availability.
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-4">
-                <Sparkles className="w-5 h-5 text-white/40 mt-1 flex-shrink-0" />
-                <div>
-                  <p className="text-white text-sm font-light uppercase tracking-widest mb-2">What We Include</p>
-                  <p className="text-white/70 font-light leading-relaxed">
-                    Cinematic storytelling, full-day coverage, premium editing, and optional album design for unforgettable keepsakes.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Contact Details */}
-            <div className="space-y-8 pt-6 border-t border-white/10">
-              <div className="flex items-start gap-4">
-                <Mail className="w-5 h-5 text-white/40 mt-1 flex-shrink-0" />
-                <div>
-                  <p className="text-white text-sm font-light uppercase tracking-widest mb-2">Email</p>
-                  <a href="mailto:phosbyvijayvarma@gmail.com" className="text-white/70 hover:text-white transition-colors font-light">
-                    phosbyvijayvarma@gmail.com
-                  </a>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-4">
-                <Phone className="w-5 h-5 text-white/40 mt-1 flex-shrink-0" />
-                <div>
-                  <p className="text-white text-sm font-light uppercase tracking-widest mb-2">Phone</p>
-                  <a href="tel:+917799558146" className="text-white/70 hover:text-white transition-colors font-light">
-                    +91 7799558146
-                  </a>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-4">
-                <MapPin className="w-5 h-5 text-white/40 mt-1 flex-shrink-0" />
-                <div>
-                  <p className="text-white text-sm font-light uppercase tracking-widest mb-2">Follow Us</p>
-                  <a href="https://www.instagram.com/phos_by__vijayvarma" target="_blank" rel="noopener noreferrer" className="text-white/70 hover:text-white transition-colors font-light">
-                    @phos_by__vijayvarma
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* WhatsApp QR Panel */}
-          <div className="flex flex-col justify-center">
-            <div className="bg-white/5 border border-white/20 p-10 rounded-none">
-              <div className="flex justify-center mb-6">
-                <div className="w-16 h-16 flex items-center justify-center bg-green-600/20 border border-green-600/50 rounded-full">
-                  <MessageCircle className="w-8 h-8 text-green-400" />
-                </div>
-              </div>
-
-              <h3 className="text-2xl font-serif font-light text-white text-center mb-4 tracking-wider">
-                Book via WhatsApp
-              </h3>
-
-              <p className="text-white/60 font-light text-center mb-8 leading-relaxed">
-                Scan the QR code or tap the button to send us a booking message instantly.
-              </p>
-
-              <div className="mx-auto mb-8 w-[260px]">
-                <img
-                  src={whatsappQr}
-                  alt="WhatsApp booking QR code"
-                  className="w-full h-auto rounded-3xl border border-white/10 bg-slate-950"
-                />
-              </div>
-
-              <div className="text-center mb-8">
-                <p className="text-white/40 text-xs font-light uppercase tracking-widest mb-3">Scan to Message</p>
-                <p className="text-white/70 text-sm font-light">
-                  Point your phone camera at the QR code to open WhatsApp and start a booking conversation.
-                </p>
-              </div>
-
-              <Button
-                asChild
-                className="w-full bg-green-600 hover:bg-green-700 text-white font-light py-3 rounded-none transition-smooth uppercase tracking-wider text-sm"
+        <div className="grid gap-6 lg:grid-cols-[1.4fr_1fr]">
+          {/* Booking form */}
+          <Reveal3D>
+            <form
+              onSubmit={handleSubmit}
+              className="grid gap-4 rounded-3xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur-sm sm:grid-cols-2 sm:p-8"
+            >
+              <label className="grid gap-2 text-sm text-white/70 sm:col-span-2">
+                Your name
+                <input required value={form.name} onChange={update('name')} placeholder="e.g. Priya & Rahul" className={inputClass} autoComplete="name" />
+              </label>
+              <label className="grid gap-2 text-sm text-white/70">
+                Type of event
+                <select value={form.eventType} onChange={update('eventType')} className={`${inputClass} [&>option]:bg-neutral-900`}>
+                  {EVENT_TYPES.map((type) => (
+                    <option key={type}>{type}</option>
+                  ))}
+                </select>
+              </label>
+              <label className="grid gap-2 text-sm text-white/70">
+                Event date
+                <input type="date" value={form.date} onChange={update('date')} className={`${inputClass} [color-scheme:dark]`} />
+              </label>
+              <label className="grid gap-2 text-sm text-white/70 sm:col-span-2">
+                Location / city
+                <input value={form.location} onChange={update('location')} placeholder="Where is the event?" className={inputClass} />
+              </label>
+              <label className="grid gap-2 text-sm text-white/70 sm:col-span-2">
+                Anything else? <span className="text-white/35">(optional)</span>
+                <textarea value={form.notes} onChange={update('notes')} rows={3} placeholder="Number of days, package you like, ideas…" className={`${inputClass} resize-none`} />
+              </label>
+              <button
+                type="submit"
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-[#25D366] px-6 py-3.5 text-sm font-semibold text-black transition hover:brightness-110 sm:col-span-2"
               >
-                <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
-                  Send Booking Message
-                </a>
-              </Button>
-
-              <p className="text-white/40 text-xs text-center font-light mt-6">
-                Please send your event date, location, and type of photography needed.
+                <Send className="h-4 w-4" />
+                Send on WhatsApp
+              </button>
+              <p className="text-center text-xs text-white/40 sm:col-span-2">
+                Opens WhatsApp with your details filled in. Nothing is sent until you tap send there.
               </p>
+            </form>
+          </Reveal3D>
+
+          {/* Quick contact */}
+          <Reveal3D delay={0.1} className="flex flex-col gap-4">
+            {QUICK_CONTACTS.map(({ icon: Icon, label, value, href, external }) => (
+              <a
+                key={label}
+                href={href}
+                target={external ? '_blank' : undefined}
+                rel={external ? 'noopener noreferrer' : undefined}
+                className="group flex items-center gap-4 rounded-2xl border border-white/10 bg-white/[0.03] p-5 transition hover:border-brand/50 hover:bg-brand/5"
+              >
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-brand/15 text-brand-glow">
+                  <Icon className="h-5 w-5" />
+                </span>
+                <span className="min-w-0">
+                  <span className="block text-xs uppercase tracking-[0.2em] text-white/45">{label}</span>
+                  <span className="block truncate text-white group-hover:text-brand-glow">{value}</span>
+                </span>
+              </a>
+            ))}
+
+            <div className="hidden flex-1 items-center gap-5 rounded-2xl border border-white/10 bg-white/[0.03] p-5 lg:flex">
+              <img src={whatsappQr} alt="QR code to chat with PHOS on WhatsApp" className="h-32 w-32 rounded-xl bg-white" loading="lazy" />
+              <div>
+                <p className="flex items-center gap-2 text-white">
+                  <MessageCircle className="h-4 w-4 text-[#25D366]" /> On desktop?
+                </p>
+                <p className="mt-2 text-sm text-white/55">Scan with your phone camera to chat with us on WhatsApp.</p>
+              </div>
             </div>
-          </div>
+          </Reveal3D>
         </div>
       </div>
     </section>

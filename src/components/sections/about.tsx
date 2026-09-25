@@ -1,3 +1,5 @@
+import { Reveal3D } from '@/components/motion/reveal-3d';
+
 
 export function AboutSection() {
   return (
@@ -5,18 +7,19 @@ export function AboutSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
           {/* Image */}
-          <div className="relative h-96 md:h-full overflow-hidden order-2 md:order-1">
+          <Reveal3D className="relative h-96 md:h-full min-h-[28rem] overflow-hidden rounded-3xl border border-white/10 order-2 md:order-1">
             <img
               src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_20250823_140519.jpg%20%281%29-8Y7Wnjm3hyjyAxj0VZlQdSNx2g3oYr.jpeg"
               alt="Vijay Varma - Photographer"
+              loading="lazy"
               className="absolute inset-0 w-full h-full object-cover"
             />
-          </div>
+          </Reveal3D>
 
           {/* Content */}
-          <div className="order-1 md:order-2 flex flex-col justify-center">
+          <Reveal3D delay={0.1} className="order-1 md:order-2 flex flex-col justify-center">
             <div className="mb-4">
-              <p className="text-sm text-white/50 font-light uppercase tracking-widest text-left">Meet the Founder</p>
+              <p className="text-xs text-brand uppercase tracking-[0.4em] text-left">Meet the Founder</p>
             </div>
             <h2 className="text-5xl md:text-6xl font-serif font-light text-white mb-2 tracking-wider text-left">
               Vijay Varma
@@ -34,8 +37,8 @@ export function AboutSection() {
             <div className="space-y-6">
               <div className="flex gap-6">
                 <div className="flex-shrink-0">
-                  <div className="flex items-center justify-center h-10 w-10 rounded-full bg-white/10 border border-white/20">
-                    <svg className="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="flex items-center justify-center h-10 w-10 rounded-full bg-brand/15 border border-brand/30">
+                    <svg className="h-5 w-5 text-brand-glow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 13l4 4L19 7" />
                     </svg>
                   </div>
@@ -50,8 +53,8 @@ export function AboutSection() {
 
               <div className="flex gap-6">
                 <div className="flex-shrink-0">
-                  <div className="flex items-center justify-center h-10 w-10 rounded-full bg-white/10 border border-white/20">
-                    <svg className="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="flex items-center justify-center h-10 w-10 rounded-full bg-brand/15 border border-brand/30">
+                    <svg className="h-5 w-5 text-brand-glow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 13l4 4L19 7" />
                     </svg>
                   </div>
@@ -66,8 +69,8 @@ export function AboutSection() {
 
               <div className="flex gap-6">
                 <div className="flex-shrink-0">
-                  <div className="flex items-center justify-center h-10 w-10 rounded-full bg-white/10 border border-white/20">
-                    <svg className="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="flex items-center justify-center h-10 w-10 rounded-full bg-brand/15 border border-brand/30">
+                    <svg className="h-5 w-5 text-brand-glow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 13l4 4L19 7" />
                     </svg>
                   </div>
@@ -80,7 +83,7 @@ export function AboutSection() {
                 </div>
               </div>
             </div>
-          </div>
+          </Reveal3D>
         </div>
       </div>
     </section>

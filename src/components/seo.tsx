@@ -6,7 +6,7 @@ const SEO_DESCRIPTION =
   'PHOS BY VIJAYVARMA offers cinematic wedding photography, pre-wedding shoots, portraits, baby portraits, haldi, sangeeth, and event coverage.';
 const SEO_KEYWORDS =
   'PHOS BY VIJAYVARMA, Vijay Varma photographer, wedding photography, pre wedding photography, portrait photography, event photography, cinematic photography';
-const SEO_IMAGE = '/apple-icon.png';
+const SEO_IMAGE = '/brand/phos-vijay-varma.jpg';
 const CONTACT_EMAIL = 'phosbyvijayvarma@gmail.com';
 const CONTACT_PHONE = '+91 7799558146';
 

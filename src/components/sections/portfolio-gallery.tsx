@@ -1,106 +1,154 @@
-
-import { useState, useMemo } from 'react';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { useMemo, useRef, useState } from 'react';
+import { motion } from 'framer-motion';
+import { Maximize2 } from 'lucide-react';
 import { Lightbox } from '@/components/ui/lightbox';
+import { PhotoRing3D } from '@/components/motion/photo-ring-3d';
+import { Reveal3D } from '@/components/motion/reveal-3d';
 import { PORTFOLIO_CATEGORIES, PORTFOLIO_IMAGES } from '@/lib/portfolio-data';
+import { cn } from '@/lib/utils';
 
-interface PortfolioGallerySectionProps {
-  selectedCategory: string | null;
-  onSelectCategory: (categoryId: string | null) => void;
-}
+const PAGE_SIZE = 12;
 
-export function PortfolioGallerySection({ selectedCategory, onSelectCategory }: PortfolioGallerySectionProps) {
-  const [lightboxOpen, setLightboxOpen] = useState(false);
-  const [lightboxIndex, setLightboxIndex] = useState(0);
-  const [lightboxImages, setLightboxImages] = useState(PORTFOLIO_IMAGES);
+const CATEGORY_NAMES: Record<string, string> = Object.fromEntries(
+  PORTFOLIO_CATEGORIES.map((category) => [category.id, category.name]),
+);
 
-  const categoriesWithImages = useMemo(
-    () =>
-      PORTFOLIO_CATEGORIES.map((category) => ({
-        ...category,
-        images: PORTFOLIO_IMAGES.filter((img) => img.category === category.id),
-      })),
-    [],
+// Interleave categories so "All" opens with variety instead of eleven haldi shots in a row.
+const MIXED_IMAGES = (() => {
+  const buckets = PORTFOLIO_CATEGORIES.map((category) => PORTFOLIO_IMAGES.filter((img) => img.category === category.id));
+  const mixed: typeof PORTFOLIO_IMAGES = [];
+  for (let i = 0; mixed.length < PORTFOLIO_IMAGES.length; i++) {
+    buckets.forEach((bucket) => bucket[i] && mixed.push(bucket[i]));
+  }
+  return mixed;
+})();
+
+export function PortfolioGallerySection() {
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const filtersRef = useRef<HTMLDivElement>(null);
+
+  const images = useMemo(
+    () => (selectedCategory ? PORTFOLIO_IMAGES.filter((img) => img.category === selectedCategory) : MIXED_IMAGES),
+    [selectedCategory],
   );
+  const shown = images.slice(0, visibleCount);
 
-  const visibleCategories = selectedCategory
-    ? categoriesWithImages.filter((category) => category.id === selectedCategory)
-    : categoriesWithImages;
-
-  const handleImageClick = (images: typeof PORTFOLIO_IMAGES, index: number) => {
-    setLightboxImages(images);
-    setLightboxIndex(index);
-    setLightboxOpen(true);
+  const selectCategory = (categoryId: string | null, scroll = false) => {
+    setSelectedCategory(categoryId);
+    setVisibleCount(PAGE_SIZE);
+    if (scroll) filtersRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
-  const handleAccordionChange = (value: string | null) => {
-    onSelectCategory(value);
-  };
-
-  const currentAccordionValue = selectedCategory ?? undefined;
+  const filters = [
+    { id: null, name: 'All', count: PORTFOLIO_IMAGES.length },
+    ...PORTFOLIO_CATEGORIES.map((category) => ({
+      id: category.id,
+      name: category.name,
+      count: PORTFOLIO_IMAGES.filter((img) => img.category === category.id).length,
+    })),
+  ];
 
   return (
-    <section id="portfolio" className="py-20 md:py-32 bg-black">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-20">
-          <h2 className="text-5xl md:text-6xl font-serif font-light text-white mb-6 tracking-wider">
-            Portfolio
-          </h2>
-          <p className="text-sm text-white/50 font-light uppercase tracking-widest">
-            Browse each category in collapsible sections
-          </p>
+    <section id="portfolio" className="relative bg-black py-20 md:py-28">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="grid items-center gap-10 lg:grid-cols-[1fr_1.2fr]">
+          <Reveal3D>
+            <p className="text-xs uppercase tracking-[0.4em] text-brand">Portfolio</p>
+            <h2 className="mt-4 font-serif text-4xl leading-tight text-white md:text-6xl">Every story, its own light.</h2>
+            <p className="mt-5 max-w-md text-white/60">
+              Spin the ring or tap a story to see that collection. Tap any photo to view it full screen.
+            </p>
+          </Reveal3D>
+          <PhotoRing3D photos={PORTFOLIO_CATEGORIES} onSelect={(id) => selectCategory(id, true)} />
         </div>
 
-        <Accordion type="single" collapsible value={currentAccordionValue} onValueChange={handleAccordionChange}>
-          <div className="grid gap-4">
-            {visibleCategories.map((category) => (
-              <AccordionItem key={category.id} value={category.id}>
-                <AccordionTrigger className="grid grid-cols-[1fr_auto] items-center gap-4 rounded-3xl border border-white/10 bg-white/5 px-6 py-7 text-left text-white transition hover:border-white/20 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20">
-                  <div>
-                    <h3 className="text-3xl font-serif font-light tracking-wider">{category.name}</h3>
-                    <p className="mt-1 text-sm text-white/60">{category.images.length} photos in this category</p>
-                  </div>
-                  <span className="text-sm text-white/70">Open</span>
-                </AccordionTrigger>
-                <AccordionContent className="overflow-hidden rounded-b-3xl border border-white/10 border-t-0 bg-slate-950/70 mt-[-1px]">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
-                    {category.images.map((image, index) => (
-                      <div
-                        key={image.id}
-                        className="group relative aspect-square overflow-hidden cursor-pointer rounded-3xl border border-white/10 bg-white/5"
-                        onClick={() => handleImageClick(category.images, index)}
-                      >
-                        <img
-                          src={image.thumb}
-                          alt={image.title}
-                          className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                        />
-                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-colors duration-300 flex items-center justify-center rounded-3xl">
-                          <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                            <div className="w-16 h-16 border-2 border-white/80 rounded-full flex items-center justify-center">
-                              <svg className="w-6 h-6 text-white/80" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M8 5v14l11-7z" />
-                              </svg>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            ))}
+        {/* Filters */}
+        <div
+          ref={filtersRef}
+          className="sticky top-16 z-30 -mx-4 mt-12 scroll-mt-16 border-y border-white/10 bg-black/85 px-4 py-3 backdrop-blur-md sm:mx-0 sm:rounded-full sm:border sm:px-3"
+        >
+          <div role="tablist" aria-label="Filter photos by story" className="flex gap-2 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {filters.map((filter) => {
+              const isActive = selectedCategory === filter.id;
+              return (
+                <button
+                  key={filter.name}
+                  type="button"
+                  role="tab"
+                  aria-selected={isActive}
+                  onClick={() => selectCategory(filter.id)}
+                  className={cn(
+                    'relative shrink-0 rounded-full px-4 py-2 text-sm transition-colors',
+                    isActive ? 'text-black' : 'text-white/65 hover:bg-white/5 hover:text-white',
+                  )}
+                >
+                  {isActive && (
+                    <motion.span layoutId="portfolio-filter" className="absolute inset-0 rounded-full bg-brand" transition={{ type: 'spring', stiffness: 400, damping: 32 }} />
+                  )}
+                  <span className="relative">
+                    {filter.name} <span className={isActive ? 'text-black/60' : 'text-white/35'}>{filter.count}</span>
+                  </span>
+                </button>
+              );
+            })}
           </div>
-        </Accordion>
+        </div>
+
+        {/* Masonry grid */}
+        <div className="mt-8 columns-2 gap-3 sm:gap-4 md:columns-3 lg:columns-4">
+          {shown.map((image, index) => (
+            <motion.button
+              key={`${selectedCategory ?? 'all'}-${image.id}`}
+              type="button"
+              initial={{ opacity: 0, y: 30, rotateX: -20 }}
+              animate={{ opacity: 1, y: 0, rotateX: 0 }}
+              transition={{ duration: 0.6, delay: (index % PAGE_SIZE) * 0.04, ease: [0.22, 1, 0.36, 1] }}
+              style={{ transformPerspective: 1000 }}
+              onClick={() => setLightboxIndex(index)}
+              data-cursor="View"
+              aria-label={`Open ${CATEGORY_NAMES[image.category]} photo ${index + 1} full screen`}
+              className="group relative mb-3 block w-full break-inside-avoid overflow-hidden rounded-2xl border border-white/10 bg-white/5 sm:mb-4"
+            >
+              <img
+                src={image.thumb}
+                alt={`${CATEGORY_NAMES[image.category]} photography by PHOS BY VIJAYVARMA`}
+                loading="lazy"
+                decoding="async"
+                className="w-full transition-transform duration-700 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 flex items-end justify-between bg-gradient-to-t from-black/70 via-transparent to-transparent p-3 opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100">
+                <span className="text-xs uppercase tracking-[0.2em] text-white">{CATEGORY_NAMES[image.category]}</span>
+                <Maximize2 className="h-4 w-4 text-white" />
+              </div>
+            </motion.button>
+          ))}
+        </div>
+
+        <div className="mt-10 flex flex-col items-center gap-3">
+          <p className="text-sm text-white/40">
+            Showing {shown.length} of {images.length} photos
+          </p>
+          {visibleCount < images.length && (
+            <button
+              type="button"
+              onClick={() => setVisibleCount((count) => count + PAGE_SIZE)}
+              className="rounded-full border border-white/20 px-8 py-3 text-sm font-semibold text-white transition hover:border-brand hover:text-brand-glow"
+            >
+              Show more photos
+            </button>
+          )}
+        </div>
       </div>
 
       <Lightbox
-        isOpen={lightboxOpen}
-        onClose={() => setLightboxOpen(false)}
-        images={lightboxImages}
-        currentIndex={lightboxIndex}
-        onPrevious={() => setLightboxIndex((prev) => (prev === 0 ? lightboxImages.length - 1 : prev - 1))}
-        onNext={() => setLightboxIndex((prev) => (prev === lightboxImages.length - 1 ? 0 : prev + 1))}
+        isOpen={lightboxIndex !== null}
+        onClose={() => setLightboxIndex(null)}
+        images={images.map((img) => ({ ...img, title: CATEGORY_NAMES[img.category] }))}
+        currentIndex={lightboxIndex ?? 0}
+        onPrevious={() => setLightboxIndex((prev) => ((prev ?? 0) === 0 ? images.length - 1 : (prev ?? 0) - 1))}
+        onNext={() => setLightboxIndex((prev) => ((prev ?? 0) === images.length - 1 ? 0 : (prev ?? 0) + 1))}
       />
     </section>
   );
