@@ -25,6 +25,15 @@ export function Lightbox({ isOpen, onClose, images, currentIndex, onPrevious, on
     return () => window.removeEventListener('keydown', handleKey);
   }, [isOpen, onPrevious, onNext]);
 
+  // Warm up the neighbours so swiping never lands on a half-loaded photo.
+  useEffect(() => {
+    if (!isOpen || images.length < 2) return;
+    [currentIndex + 1, currentIndex - 1].forEach((i) => {
+      const neighbour = images[(i + images.length) % images.length];
+      if (neighbour) new Image().src = neighbour.src;
+    });
+  }, [isOpen, currentIndex, images]);
+
   const currentImage = images[currentIndex];
   if (!currentImage) return null;
 

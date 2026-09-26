@@ -1,7 +1,8 @@
-import { useRef } from 'react';
+import { useRef, type RefObject } from 'react';
 import {
   motion,
   useAnimationFrame,
+  useInView,
   useMotionValue,
   useReducedMotion,
   useScroll,
@@ -10,6 +11,7 @@ import {
   useVelocity,
 } from 'framer-motion';
 import { PORTFOLIO_CATEGORIES, PORTFOLIO_IMAGES } from '@/lib/portfolio-data';
+import { getImageInfo } from '@/lib/images';
 
 const FRAMES_PER_STRIP = 7;
 
@@ -33,11 +35,13 @@ interface StripProps {
   baseSpeed: number;
   className: string;
   frameOffset: number;
+  sectionRef: RefObject<HTMLElement>;
 }
 
 /** A strip of 35mm film that drifts sideways and speeds up (or reverses) with scroll velocity. */
-function Strip({ frames, baseSpeed, className, frameOffset }: StripProps) {
+function Strip({ frames, baseSpeed, className, frameOffset, sectionRef }: StripProps) {
   const reduceMotion = useReducedMotion();
+  const isInView = useInView(sectionRef, { margin: '100px' });
   const baseX = useMotionValue(0);
   const { scrollY } = useScroll();
   const scrollVelocity = useVelocity(scrollY);
@@ -47,7 +51,7 @@ function Strip({ frames, baseSpeed, className, frameOffset }: StripProps) {
   const x = useTransform(baseX, (v) => `${wrap(-50, 0, v)}%`);
 
   useAnimationFrame((_, delta) => {
-    if (reduceMotion) return;
+    if (reduceMotion || !isInView) return;
     const factor = velocityFactor.get();
     if (factor < 0) direction.current = -1;
     else if (factor > 0) direction.current = 1;
@@ -63,10 +67,10 @@ function Strip({ frames, baseSpeed, className, frameOffset }: StripProps) {
       <div className="absolute inset-x-0 top-1.5 h-2.5 bg-[repeating-linear-gradient(90deg,transparent_0_10px,rgba(255,255,255,0.85)_10px_22px,transparent_22px_32px)] opacity-80" />
       <div className="absolute inset-x-0 bottom-1.5 h-2.5 bg-[repeating-linear-gradient(90deg,transparent_0_10px,rgba(255,255,255,0.85)_10px_22px,transparent_22px_32px)] opacity-80" />
 
-      <motion.div className="flex w-max gap-3" style={{ x }}>
+      <motion.div className="flex w-max gap-3" style={{ x, willChange: 'transform' }}>
         {doubled.map((image, index) => (
           <div key={`${image.id}-${index}`} className="relative h-32 w-48 shrink-0 overflow-hidden rounded-[3px] sm:h-40 sm:w-60">
-            <img src={image.thumb} alt="" loading="lazy" decoding="async" className="h-full w-full object-cover saturate-[1.1] sepia-[0.15]" />
+            <img src={getImageInfo(image.src).thumb} alt="" loading="lazy" decoding="async" className="h-full w-full object-cover" />
             <span className="absolute bottom-1 left-2 font-mono text-[9px] tracking-widest text-orange-300/90">
               {((index % frames.length) + frameOffset).toString().padStart(2, '0')}
               <span className="ml-1">▸</span>
@@ -83,11 +87,13 @@ function Strip({ frames, baseSpeed, className, frameOffset }: StripProps) {
 
 /** Two crossing strips of film between sections, tilted in 3D. */
 export function FilmStripSection() {
+  const sectionRef = useRef<HTMLElement>(null);
+
   return (
-    <section aria-label="Film strip of recent work" className="relative h-[340px] overflow-hidden bg-black sm:h-[420px]" style={{ perspective: 1200 }}>
+    <section ref={sectionRef} aria-label="Film strip of recent work" className="relative h-[340px] overflow-hidden bg-black sm:h-[420px]" style={{ perspective: 1200 }}>
       <div className="absolute inset-0" style={{ transformStyle: 'preserve-3d', transform: 'rotateX(18deg)' }}>
-        <Strip frames={pickFrames(0)} baseSpeed={-2} frameOffset={1} className="top-[14%] -rotate-[5deg]" />
-        <Strip frames={pickFrames(1)} baseSpeed={1.5} frameOffset={24} className="top-[46%] rotate-[4deg]" />
+        <Strip sectionRef={sectionRef} frames={pickFrames(0)} baseSpeed={-2} frameOffset={1} className="top-[14%] -rotate-[5deg]" />
+        <Strip sectionRef={sectionRef} frames={pickFrames(1)} baseSpeed={1.5} frameOffset={24} className="top-[46%] rotate-[4deg]" />
       </div>
       <div aria-hidden className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,black,transparent_15%,transparent_85%,black)]" />
     </section>

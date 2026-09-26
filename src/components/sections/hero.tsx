@@ -1,6 +1,6 @@
-import { motion, useMotionValue, useReducedMotion, useSpring, useTransform, type Variants } from 'framer-motion';
+import { motion, useInView, useMotionValue, useReducedMotion, useSpring, useTransform, type Variants } from 'framer-motion';
 import { ArrowDown, MessageCircle } from 'lucide-react';
-import type { PointerEvent } from 'react';
+import { useRef, type PointerEvent } from 'react';
 import { PORTFOLIO_CATEGORIES, PORTFOLIO_IMAGES } from '@/lib/portfolio-data';
 import { BRAND_IMAGE, SITE_TAGLINE, whatsappLink } from '@/lib/constants';
 import { ViewfinderHUD } from '@/components/motion/viewfinder-hud';
@@ -26,6 +26,8 @@ const flipUp: Variants = {
 
 export function HeroSection() {
   const reduceMotion = useReducedMotion();
+  const sectionRef = useRef<HTMLElement>(null);
+  const isInView = useInView(sectionRef);
   const px = useMotionValue(0);
   const py = useMotionValue(0);
   const rotateY = useSpring(useTransform(px, [-1, 1], [-12, 12]), { stiffness: 90, damping: 18 });
@@ -45,7 +47,11 @@ export function HeroSection() {
   };
 
   return (
-    <section id="home" className="relative min-h-screen w-full overflow-hidden bg-black text-white">
+    <section
+      ref={sectionRef}
+      id="home"
+      className={`relative min-h-screen w-full overflow-hidden bg-black text-white ${isInView ? '' : 'loops-paused'}`}
+    >
       {/* Atmosphere: soft blue stage light behind the portrait */}
       <div aria-hidden className="pointer-events-none absolute inset-0">
         <div className="absolute right-[-10%] top-1/2 h-[80vmin] w-[80vmin] -translate-y-1/2 rounded-full bg-brand/15 blur-[120px] lg:right-[5%]" />
@@ -65,41 +71,37 @@ export function HeroSection() {
             focusY.set(FACE_FOCUS.y);
           }}
         >
+          {/* Entrance and mouse tilt live on separate layers so they never fight over rotateY. */}
           <motion.div
             className="relative h-full w-full"
-            style={{ rotateX, rotateY, transformStyle: 'preserve-3d' }}
+            style={{ transformStyle: 'preserve-3d' }}
             initial={{ opacity: 0, scale: 0.85, rotateY: -30 }}
             animate={{ opacity: 1, scale: 1, rotateY: 0 }}
             transition={{ duration: 1.3, ease: [0.22, 1, 0.36, 1] }}
           >
-            {/* Rotating lens rings, sitting behind the artwork in 3D */}
-            <motion.div
-              aria-hidden
-              className="absolute inset-[6%] rounded-full border border-brand/40 shadow-[0_0_60px_rgba(47,155,255,0.25),inset_0_0_40px_rgba(47,155,255,0.15)]"
-              style={{ translateZ: -60 }}
-              animate={reduceMotion ? undefined : { rotate: 360 }}
-              transition={{ duration: 40, repeat: Infinity, ease: 'linear' }}
-            >
-              <span className="absolute left-1/2 top-0 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand-glow shadow-[0_0_16px_4px_var(--brand)]" />
-            </motion.div>
-            <motion.div
-              aria-hidden
-              className="absolute inset-[1%] rounded-full border border-dashed border-white/10"
-              style={{ translateZ: -100 }}
-              animate={reduceMotion ? undefined : { rotate: -360 }}
-              transition={{ duration: 70, repeat: Infinity, ease: 'linear' }}
-            />
+            <motion.div className="relative h-full w-full" style={{ rotateX, rotateY, transformStyle: 'preserve-3d' }}>
+              {/* Rotating lens rings, sitting behind the artwork in 3D */}
+              <div aria-hidden className="absolute inset-[6%]" style={{ transform: 'translateZ(-60px)' }}>
+                <div className="loop-spin h-full w-full rounded-full border border-brand/40 shadow-[0_0_60px_rgba(47,155,255,0.25),inset_0_0_40px_rgba(47,155,255,0.15)]">
+                  <span className="absolute left-1/2 top-0 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand-glow shadow-[0_0_16px_4px_var(--brand)]" />
+                </div>
+              </div>
+              <div aria-hidden className="absolute inset-[1%]" style={{ transform: 'translateZ(-100px)' }}>
+                <div className="loop-spin-reverse h-full w-full rounded-full border border-dashed border-white/10" />
+              </div>
 
-            <motion.img
-              src={BRAND_IMAGE}
-              alt="Vijay Varma holding a camera gimbal above the PHOS by Vijay Varma logo"
-              className="relative h-full w-full select-none object-contain [mask-image:radial-gradient(circle_at_center,black_62%,transparent_72%)]"
-              style={{ translateZ: 40 }}
-              draggable={false}
-              animate={reduceMotion ? undefined : { y: [0, -10, 0] }}
-              transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-            />
-            <ViewfinderHUD focusX={focusX} focusY={focusY} />
+              <div className="relative h-full w-full" style={{ transform: 'translateZ(40px)' }}>
+                <img
+                  src={BRAND_IMAGE}
+                  alt="Vijay Varma holding a camera gimbal above the PHOS by Vijay Varma logo"
+                  width={1254}
+                  height={1254}
+                  className="loop-float h-full w-full select-none object-contain [mask-image:radial-gradient(circle_at_center,black_62%,transparent_72%)]"
+                  draggable={false}
+                />
+              </div>
+              <ViewfinderHUD focusX={focusX} focusY={focusY} active={isInView} />
+            </motion.div>
           </motion.div>
         </div>
 
@@ -154,7 +156,7 @@ export function HeroSection() {
             </motion.a>
           </motion.div>
 
-          <motion.dl variants={flipUp} className="mt-10 grid grid-cols-3 divide-x divide-white/10 rounded-2xl border border-white/10 bg-white/[0.03] py-4 backdrop-blur-sm">
+          <motion.dl variants={flipUp} className="mt-10 grid grid-cols-3 divide-x divide-white/10 rounded-2xl border border-white/10 bg-white/[0.03] py-4">
             {STATS.map((stat) => (
               <div key={stat.label} className="px-3 text-center">
                 <dt className="sr-only">{stat.label}</dt>
@@ -166,16 +168,14 @@ export function HeroSection() {
         </motion.div>
       </div>
 
-      <motion.a
+      <a
         href="#portfolio"
         aria-label="Scroll to portfolio"
-        className="absolute bottom-6 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-2 text-[10px] uppercase tracking-[0.4em] text-white/40 hover:text-white/70 lg:flex"
-        animate={reduceMotion ? undefined : { y: [0, 8, 0] }}
-        transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+        className="loop-bob absolute bottom-6 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-2 text-[10px] uppercase tracking-[0.4em] text-white/40 hover:text-white/70 lg:flex"
       >
         Scroll
         <ArrowDown className="h-4 w-4" />
-      </motion.a>
+      </a>
     </section>
   );
 }

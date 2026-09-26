@@ -3,6 +3,7 @@ import {
   AnimatePresence,
   motion,
   useAnimationFrame,
+  useInView,
   useMotionValue,
   useMotionValueEvent,
   useReducedMotion,
@@ -10,6 +11,7 @@ import {
   useTransform,
   type MotionValue,
 } from 'framer-motion';
+import { getImageInfo } from '@/lib/images';
 
 export interface RingPhoto {
   id: string;
@@ -22,9 +24,11 @@ interface PhotoRing3DProps {
   onSelect?: (id: string) => void;
 }
 
-const AUTO_SPEED = 0.008; // degrees per millisecond (~one turn every 45s)
-const HOVER_SPEED = 0.002;
-const DRAG_FACTOR = 0.35;
+const AUTO_SPEED = -0.008; // degrees per millisecond (~one turn every 45s)
+const HOVER_SPEED = -0.002;
+const DRAG_FACTOR = 0.35; // degrees per pixel dragged
+const MAX_FLING = 1.2; // degrees per millisecond
+const EASE_BACK_MS = 900; // how long a fling takes to settle back into the idle spin
 
 function useElementWidth<T extends HTMLElement>() {
   const ref = useRef<T>(null);
@@ -53,10 +57,13 @@ export function PhotoRing3D({ photos, onSelect }: PhotoRing3DProps) {
   const radius = (cardWidth / 2 / Math.tan(Math.PI / count)) * 1.18;
 
   const rotation = useMotionValue(0);
+  const velocity = useRef(AUTO_SPEED);
   const isHovering = useRef(false);
   const isDragging = useRef(false);
   const didDrag = useRef(false);
   const lastX = useRef(0);
+  const lastMoveTime = useRef(0);
+  const isInView = useInView(containerRef, { margin: '100px' });
 
   // Mouse parallax: the whole ring leans toward the cursor.
   const pointerX = useMotionValue(0);
@@ -66,10 +73,12 @@ export function PhotoRing3D({ photos, onSelect }: PhotoRing3DProps) {
 
   const [activeIndex, setActiveIndex] = useState(0);
 
+  // Momentum: after a fling (or hover change) the speed eases toward the idle spin instead of snapping.
   useAnimationFrame((_, delta) => {
-    if (reduceMotion || isDragging.current) return;
-    const speed = isHovering.current ? HOVER_SPEED : AUTO_SPEED;
-    rotation.set(rotation.get() - delta * speed);
+    if (!isInView || isDragging.current) return;
+    const target = reduceMotion ? 0 : isHovering.current ? HOVER_SPEED : AUTO_SPEED;
+    velocity.current += (target - velocity.current) * (1 - Math.exp(-delta / (EASE_BACK_MS / 3)));
+    if (Math.abs(velocity.current) > 0.00001) rotation.set(rotation.get() + velocity.current * delta);
   });
 
   useMotionValueEvent(rotation, 'change', (value) => {
@@ -81,32 +90,51 @@ export function PhotoRing3D({ photos, onSelect }: PhotoRing3DProps) {
     isDragging.current = true;
     didDrag.current = false;
     lastX.current = event.clientX;
+    lastMoveTime.current = event.timeStamp;
+    velocity.current = 0;
   };
 
   const handlePointerMove = (event: PointerEvent<HTMLDivElement>) => {
-    const rect = event.currentTarget.getBoundingClientRect();
-    pointerX.set(((event.clientX - rect.left) / rect.width) * 2 - 1);
-    pointerY.set(((event.clientY - rect.top) / rect.height) * 2 - 1);
+    // Lean toward the cursor on mouse only; on touch it would jitter while dragging.
+    if (event.pointerType === 'mouse') {
+      const rect = event.currentTarget.getBoundingClientRect();
+      pointerX.set(((event.clientX - rect.left) / rect.width) * 2 - 1);
+      pointerY.set(((event.clientY - rect.top) / rect.height) * 2 - 1);
+    }
 
     if (!isDragging.current) return;
     const dx = event.clientX - lastX.current;
-    lastX.current = event.clientX;
-    if (Math.abs(dx) > 0) {
-      if (!didDrag.current && Math.abs(dx) > 2) {
-        didDrag.current = true;
-        event.currentTarget.setPointerCapture(event.pointerId);
-      }
-      rotation.set(rotation.get() + dx * DRAG_FACTOR);
+    if (dx === 0) return;
+    if (!didDrag.current && Math.abs(dx) > 3) {
+      didDrag.current = true;
+      event.currentTarget.setPointerCapture(event.pointerId);
     }
+    if (!didDrag.current) return;
+
+    const dt = Math.max(event.timeStamp - lastMoveTime.current, 1);
+    const degrees = dx * DRAG_FACTOR;
+    rotation.set(rotation.get() + degrees);
+    // Smoothed drag speed, used as the fling velocity on release.
+    velocity.current = velocity.current * 0.6 + (degrees / dt) * 0.4;
+    lastX.current = event.clientX;
+    lastMoveTime.current = event.timeStamp;
   };
 
-  const endDrag = () => {
+  const endDrag = (event: PointerEvent<HTMLDivElement>) => {
+    if (!isDragging.current) return;
     isDragging.current = false;
+    // A pause before letting go means no fling.
+    if (!didDrag.current || event.timeStamp - lastMoveTime.current > 80) velocity.current = 0;
+    velocity.current = Math.max(-MAX_FLING, Math.min(MAX_FLING, velocity.current));
   };
 
-  const handleLeave = () => {
+  const handleEnter = (event: PointerEvent<HTMLDivElement>) => {
+    if (event.pointerType === 'mouse') isHovering.current = true;
+  };
+
+  const handleLeave = (event: PointerEvent<HTMLDivElement>) => {
+    endDrag(event);
     isHovering.current = false;
-    isDragging.current = false;
     pointerX.set(0);
     pointerY.set(0);
   };
@@ -120,7 +148,7 @@ export function PhotoRing3D({ photos, onSelect }: PhotoRing3DProps) {
         data-cursor="Drag"
         className="relative flex w-full cursor-grab touch-pan-y select-none items-center justify-center active:cursor-grabbing"
         style={{ height: cardHeight * 1.9, perspective: 1100 }}
-        onPointerEnter={() => (isHovering.current = true)}
+        onPointerEnter={handleEnter}
         onPointerLeave={handleLeave}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
@@ -150,7 +178,7 @@ export function PhotoRing3D({ photos, onSelect }: PhotoRing3DProps) {
           >
             <motion.div
               className="absolute inset-0"
-              style={{ transformStyle: 'preserve-3d', rotateY: rotation }}
+              style={{ transformStyle: 'preserve-3d', rotateY: rotation, willChange: 'transform' }}
             >
               {photos.map((photo, index) => (
                 <RingCard
@@ -215,11 +243,11 @@ function RingCard({ photo, index, step, radius, rotation, onClick }: RingCardPro
       style={{ transform: `rotateY(${index * step}deg) translateZ(${radius}px)` }}
     >
       <img
-        src={photo.image}
+        src={getImageInfo(photo.image).thumb}
         alt={`${photo.name} photography by PHOS BY VIJAYVARMA`}
         draggable={false}
         decoding="async"
-        className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+        className="h-full w-full object-cover"
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
       <span className="absolute bottom-3 left-3 right-3 text-left text-[10px] uppercase tracking-[0.3em] text-white/80">

@@ -1,10 +1,12 @@
 import { useRef } from 'react';
-import { motion, useAnimationFrame, useMotionTemplate, useReducedMotion, useSpring, type MotionValue } from 'framer-motion';
+import { motion, useAnimationFrame, useMotionTemplate, useSpring, type MotionValue } from 'framer-motion';
 
 interface ViewfinderHUDProps {
   /** Focus point in percent of the frame (0-100). */
   focusX: MotionValue<number>;
   focusY: MotionValue<number>;
+  /** Pause the timecode when the HUD is off screen. */
+  active?: boolean;
 }
 
 const FPS = 24;
@@ -14,17 +16,21 @@ function Corner({ className }: { className: string }) {
 }
 
 /** Camera viewfinder overlay: frame corners, REC timecode, exposure readout and a tracking AF box. */
-export function ViewfinderHUD({ focusX, focusY }: ViewfinderHUDProps) {
-  const reduceMotion = useReducedMotion();
+export function ViewfinderHUD({ focusX, focusY, active = true }: ViewfinderHUDProps) {
   const timecodeRef = useRef<HTMLSpanElement>(null);
+  const lastFrame = useRef(-1);
   const x = useSpring(focusX, { stiffness: 120, damping: 18 });
   const y = useSpring(focusY, { stiffness: 120, damping: 18 });
-  const left = useMotionTemplate`${x}%`;
-  const top = useMotionTemplate`${y}%`;
+  // Translating a frame-sized layer by N% of itself moves the box to N% of the frame, transform-only.
+  const layerX = useMotionTemplate`${x}%`;
+  const layerY = useMotionTemplate`${y}%`;
 
   useAnimationFrame((time) => {
-    if (!timecodeRef.current) return;
+    if (!active || !timecodeRef.current) return;
     const totalFrames = Math.floor((time / 1000) * FPS);
+    // Only touch the DOM when the frame number changes (24x a second, not every refresh).
+    if (totalFrames === lastFrame.current) return;
+    lastFrame.current = totalFrames;
     const frames = totalFrames % FPS;
     const seconds = Math.floor(totalFrames / FPS);
     const pad = (n: number) => String(n).padStart(2, '0');
@@ -39,12 +45,8 @@ export function ViewfinderHUD({ focusX, focusY }: ViewfinderHUDProps) {
       <Corner className="bottom-0 right-0 border-b-2 border-r-2" />
 
       <div className="absolute left-3 top-3 flex items-center gap-2">
-        <motion.span
-          className="h-2 w-2 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.9)]"
-          animate={reduceMotion ? undefined : { opacity: [1, 0.2, 1] }}
-          transition={{ duration: 1.2, repeat: Infinity }}
-        />
-        REC <span ref={timecodeRef} className="text-white/60">00:00:00:00</span>
+        <span className="loop-blink h-2 w-2 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.9)]" />
+        REC <span ref={timecodeRef} className="tabular-nums text-white/60">00:00:00:00</span>
       </div>
       <div className="absolute right-3 top-3 flex items-center gap-2 text-white/60">
         4K · 24P
@@ -61,13 +63,11 @@ export function ViewfinderHUD({ focusX, focusY }: ViewfinderHUDProps) {
       </div>
 
       {/* Autofocus box that follows the cursor */}
-      <motion.div className="absolute h-14 w-14 -translate-x-1/2 -translate-y-1/2" style={{ left, top }}>
-        <motion.div
-          className="h-full w-full border border-brand-glow shadow-[0_0_12px_rgba(47,155,255,0.6)]"
-          animate={reduceMotion ? undefined : { scale: [1, 0.86, 1] }}
-          transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
-        />
-        <span className="absolute -top-4 left-0 text-[9px] text-brand-glow">AF-C ●</span>
+      <motion.div className="absolute inset-0" style={{ x: layerX, y: layerY, willChange: 'transform' }}>
+        <div className="absolute left-0 top-0 h-14 w-14 -translate-x-1/2 -translate-y-1/2">
+          <div className="loop-breathe h-full w-full border border-brand-glow shadow-[0_0_12px_rgba(47,155,255,0.6)]" />
+          <span className="absolute -top-4 left-0 text-[9px] text-brand-glow">AF-C ●</span>
+        </div>
       </motion.div>
     </div>
   );

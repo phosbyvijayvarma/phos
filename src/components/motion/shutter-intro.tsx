@@ -47,10 +47,11 @@ export function ShutterIntro() {
             // Outer layer fixes the blade's angle; inner blade slides outward along it and twists.
             <div key={index} className="absolute inset-0" style={{ transform: `rotate(${index * (360 / BLADES)}deg)` }}>
               <motion.div
-                className="absolute left-1/2 top-1/2 -ml-[100vmax] -mt-[200vmax] h-[200vmax] w-[200vmax] border-b border-brand/40 bg-gradient-to-t from-[#0b1220] to-black"
-                style={{ transformOrigin: '50% 100%' }}
+                // Sized to just cover the screen from the centre (any point is <= ~71vmax away), which keeps GPU memory low on phones.
+                className="absolute left-1/2 top-1/2 -ml-[80vmax] -mt-[90vmax] h-[90vmax] w-[160vmax] border-b border-brand/40 bg-[#070b14]"
+                style={{ transformOrigin: '50% 100%', willChange: 'transform' }}
                 initial={{ y: 0, rotate: 0 }}
-                animate={open ? { y: '-75vmax', rotate: -30 } : { y: 0, rotate: 0 }}
+                animate={open ? { y: '-90vmax', rotate: -30 } : { y: 0, rotate: 0 }}
                 transition={{ duration: 1.1, ease: [0.7, 0, 0.2, 1] }}
               />
             </div>

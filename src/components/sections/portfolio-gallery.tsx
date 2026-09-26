@@ -6,6 +6,7 @@ import { PhotoRing3D } from '@/components/motion/photo-ring-3d';
 import { Reveal3D } from '@/components/motion/reveal-3d';
 import { PORTFOLIO_CATEGORIES, PORTFOLIO_IMAGES } from '@/lib/portfolio-data';
 import { cn } from '@/lib/utils';
+import { getImageInfo } from '@/lib/images';
 
 const PAGE_SIZE = 12;
 
@@ -67,7 +68,7 @@ export function PortfolioGallerySection() {
         {/* Filters */}
         <div
           ref={filtersRef}
-          className="sticky top-16 z-30 -mx-4 mt-12 scroll-mt-16 border-y border-white/10 bg-black/85 px-4 py-3 backdrop-blur-md sm:mx-0 sm:rounded-full sm:border sm:px-3"
+          className="sticky top-16 z-30 -mx-4 mt-12 scroll-mt-16 border-y border-white/10 bg-black/95 px-4 py-3 sm:mx-0 sm:bg-black/80 sm:backdrop-blur-md sm:rounded-full sm:border sm:px-3"
         >
           <div role="tablist" aria-label="Filter photos by story" className="flex gap-2 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {filters.map((filter) => {
@@ -98,32 +99,38 @@ export function PortfolioGallerySection() {
 
         {/* Masonry grid */}
         <div className="mt-8 columns-2 gap-3 sm:gap-4 md:columns-3 lg:columns-4">
-          {shown.map((image, index) => (
-            <motion.button
-              key={`${selectedCategory ?? 'all'}-${image.id}`}
-              type="button"
-              initial={{ opacity: 0, y: 30, rotateX: -20 }}
-              animate={{ opacity: 1, y: 0, rotateX: 0 }}
-              transition={{ duration: 0.6, delay: (index % PAGE_SIZE) * 0.04, ease: [0.22, 1, 0.36, 1] }}
-              style={{ transformPerspective: 1000 }}
-              onClick={() => setLightboxIndex(index)}
-              data-cursor="View"
-              aria-label={`Open ${CATEGORY_NAMES[image.category]} photo ${index + 1} full screen`}
-              className="group relative mb-3 block w-full break-inside-avoid overflow-hidden rounded-2xl border border-white/10 bg-white/5 sm:mb-4"
-            >
-              <img
-                src={image.thumb}
-                alt={`${CATEGORY_NAMES[image.category]} photography by PHOS BY VIJAYVARMA`}
-                loading="lazy"
-                decoding="async"
-                className="w-full transition-transform duration-700 group-hover:scale-105"
-              />
-              <div className="absolute inset-0 flex items-end justify-between bg-gradient-to-t from-black/70 via-transparent to-transparent p-3 opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100">
-                <span className="text-xs uppercase tracking-[0.2em] text-white">{CATEGORY_NAMES[image.category]}</span>
-                <Maximize2 className="h-4 w-4 text-white" />
-              </div>
-            </motion.button>
-          ))}
+          {shown.map((image, index) => {
+            const info = getImageInfo(image.src);
+            return (
+              <motion.button
+                key={`${selectedCategory ?? 'all'}-${image.id}`}
+                type="button"
+                initial={{ opacity: 0, y: 24, rotateX: -12 }}
+                whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
+                viewport={{ once: true, margin: '0px 0px -40px 0px' }}
+                transition={{ duration: 0.6, delay: (index % 4) * 0.05, ease: [0.22, 1, 0.36, 1] }}
+                style={{ transformPerspective: 1000 }}
+                onClick={() => setLightboxIndex(index)}
+                data-cursor="View"
+                aria-label={`Open ${CATEGORY_NAMES[image.category]} photo ${index + 1} full screen`}
+                className="group relative mb-3 block w-full break-inside-avoid overflow-hidden rounded-2xl border border-white/10 bg-white/5 sm:mb-4"
+              >
+                <img
+                  src={info.thumb}
+                  width={info.width}
+                  height={info.height}
+                  alt={`${CATEGORY_NAMES[image.category]} photography by PHOS BY VIJAYVARMA`}
+                  loading="lazy"
+                  decoding="async"
+                  className="h-auto w-full bg-white/5 transition-transform duration-700 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 flex items-end justify-between bg-gradient-to-t from-black/70 via-transparent to-transparent p-3 opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100">
+                  <span className="text-xs uppercase tracking-[0.2em] text-white">{CATEGORY_NAMES[image.category]}</span>
+                  <Maximize2 className="h-4 w-4 text-white" />
+                </div>
+              </motion.button>
+            );
+          })}
         </div>
 
         <div className="mt-10 flex flex-col items-center gap-3">

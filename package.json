@@ -7,7 +7,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "start:build": "pnpm build && pnpm preview",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "thumbs": "node scripts/generate-thumbs.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
@@ -68,6 +69,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "postcss": "^8.5",
+    "sharp": "^0.34.5",
     "tailwindcss": "^4.2.0",
     "tw-animate-css": "1.3.3",
     "typescript": "5.7.3"

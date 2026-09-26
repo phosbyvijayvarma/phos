@@ -9,7 +9,10 @@ export function AboutSection() {
           {/* Image */}
           <Reveal3D className="relative h-96 md:h-full min-h-[28rem] overflow-hidden rounded-3xl border border-white/10 order-2 md:order-1">
             <img
-              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_20250823_140519.jpg%20%281%29-8Y7Wnjm3hyjyAxj0VZlQdSNx2g3oYr.jpeg"
+              src="/brand/vijay-varma-about.webp"
+              width={1000}
+              height={1500}
+              decoding="async"
               alt="Vijay Varma - Photographer"
               loading="lazy"
               className="absolute inset-0 w-full h-full object-cover"

@@ -205,6 +205,84 @@
     animation: zoomIn 0.8s ease-out;
   }
 
+  /* Decorative loops. These run on the compositor, so they stay smooth while the page is busy.
+     Add .loops-paused to an ancestor to pause them (e.g. when scrolled off screen). */
+  @keyframes loop-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes loop-float {
+    0%,
+    100% {
+      transform: translate3d(0, 0, 0);
+    }
+    50% {
+      transform: translate3d(0, -10px, 0);
+    }
+  }
+
+  @keyframes loop-bob {
+    0%,
+    100% {
+      transform: translate3d(0, 0, 0);
+    }
+    50% {
+      transform: translate3d(0, 8px, 0);
+    }
+  }
+
+  @keyframes loop-blink {
+    50% {
+      opacity: 0.2;
+    }
+  }
+
+  @keyframes loop-breathe {
+    50% {
+      transform: scale(0.86);
+    }
+  }
+
+  .loop-spin {
+    animation: loop-spin 40s linear infinite;
+  }
+
+  .loop-spin-reverse {
+    animation: loop-spin 70s linear infinite reverse;
+  }
+
+  .loop-float {
+    animation: loop-float 6s ease-in-out infinite;
+  }
+
+  .loop-bob {
+    animation: loop-bob 2s ease-in-out infinite;
+  }
+
+  .loop-blink {
+    animation: loop-blink 1.2s ease-in-out infinite;
+  }
+
+  .loop-breathe {
+    animation: loop-breathe 2.4s ease-in-out infinite;
+  }
+
+  :is(.loop-spin, .loop-spin-reverse, .loop-float, .loop-bob, .loop-blink, .loop-breathe) {
+    will-change: transform;
+  }
+
+  .loops-paused :is(.loop-spin, .loop-spin-reverse, .loop-float, .loop-bob, .loop-blink, .loop-breathe) {
+    animation-play-state: paused;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :is(.loop-spin, .loop-spin-reverse, .loop-float, .loop-bob, .loop-blink, .loop-breathe) {
+      animation: none;
+    }
+  }
+
   /* Smooth transition utility */
   .transition-smooth {
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);

@@ -61,7 +61,7 @@ export function ContactSection() {
           <Reveal3D>
             <form
               onSubmit={handleSubmit}
-              className="grid gap-4 rounded-3xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur-sm sm:grid-cols-2 sm:p-8"
+              className="grid gap-4 rounded-3xl border border-white/10 bg-white/[0.03] p-6 sm:grid-cols-2 sm:p-8"
             >
               <label className="grid gap-2 text-sm text-white/70 sm:col-span-2">
                 Your name
