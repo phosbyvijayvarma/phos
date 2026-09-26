@@ -8,6 +8,11 @@ interface VideoItem {
   title: string;
 }
 
+// Feed titles can arrive HTML-escaped (e.g. "PRASAD &amp; PRAVALLIKA").
+function decodeEntities(text: string) {
+  return new DOMParser().parseFromString(text, 'text/html').documentElement.textContent ?? text;
+}
+
 /** Shows the YouTube thumbnail and only loads the heavy player once someone taps play. */
 function VideoEmbed({ videoId, title }: VideoItem) {
   const [playing, setPlaying] = useState(false);
@@ -105,7 +110,7 @@ export default function LatestVideos() {
     loadFromAllOrigins()
       .catch(() => loadFromRss2Json())
       .then((latestVideos) => {
-        setVideos(latestVideos);
+        setVideos(latestVideos.map((video: VideoItem) => ({ ...video, title: decodeEntities(video.title) })));
         setError(null);
       })
       .catch((err) => {
@@ -116,13 +121,13 @@ export default function LatestVideos() {
   }, []);
 
   return (
-    <section id="videos" className="py-20 md:py-28 bg-black">
+    <section id="videos" className="py-14 sm:py-20 md:py-28 bg-black">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-12 text-center">
+        <div className="mb-8 text-center sm:mb-12">
           <p className="text-xs text-brand uppercase tracking-[0.4em] mb-4">
             Films
           </p>
-          <h2 className="text-4xl md:text-5xl font-serif text-white">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif text-white">
             Watch our latest films
           </h2>
           <p className="max-w-2xl mx-auto mt-4 text-base text-slate-400">
@@ -135,22 +140,26 @@ export default function LatestVideos() {
         ) : error ? (
           <div className="text-center text-white/60">Our films are a tap away on YouTube.</div>
         ) : (
-          <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
-            {videos.map((video) => (
-              <div
-                key={video.videoId}
-                className="overflow-hidden rounded-3xl border border-white/10 bg-slate-950 shadow-xl shadow-black/20"
-              >
-                <VideoEmbed videoId={video.videoId} title={video.title} />
-                <div className="p-6">
-                  <p className="text-base font-semibold text-white leading-snug">{video.title}</p>
+          <>
+            {/* Swipeable row on phones, grid from tablet up. */}
+            <div className="-mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-2 [scrollbar-width:none] md:mx-0 md:grid md:grid-cols-2 md:gap-6 md:overflow-visible md:px-0 md:pb-0 [&::-webkit-scrollbar]:hidden">
+              {videos.map((video) => (
+                <div
+                  key={video.videoId}
+                  className="w-[85%] shrink-0 snap-center overflow-hidden rounded-3xl border border-white/10 bg-slate-950 shadow-xl shadow-black/20 md:w-auto"
+                >
+                  <VideoEmbed videoId={video.videoId} title={video.title} />
+                  <div className="p-4 sm:p-6">
+                    <p className="line-clamp-2 text-sm font-medium leading-snug text-white/90 sm:text-base">{video.title}</p>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+            <p className="mt-3 text-center text-xs uppercase tracking-[0.3em] text-white/35 md:hidden">Swipe for more films →</p>
+          </>
         )}
 
-        <div className="mt-10 flex justify-center">
+        <div className="mt-8 flex justify-center sm:mt-10">
           <a
             href={YOUTUBE_CHANNEL_URL}
             target="_blank"

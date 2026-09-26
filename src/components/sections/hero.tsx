@@ -11,7 +11,7 @@ const FACE_FOCUS = { x: 50, y: 24 };
 const STATS = [
   { value: `${PORTFOLIO_CATEGORIES.length}`, label: 'Story styles' },
   { value: `${Math.floor(PORTFOLIO_IMAGES.length / 10) * 10}+`, label: 'Curated frames' },
-  { value: 'Photo + Film', label: 'One team' },
+  { value: '2-in-1', label: 'Photo + film' },
 ];
 
 const container: Variants = {
@@ -58,10 +58,10 @@ export function HeroSection() {
         <div className="absolute left-[-10%] top-[10%] h-[40vmin] w-[40vmin] rounded-full bg-brand-deep/10 blur-[100px]" />
       </div>
 
-      <div className="relative mx-auto grid min-h-screen max-w-7xl grid-cols-1 items-center gap-10 px-5 pb-16 pt-24 sm:px-6 lg:grid-cols-[1.05fr_1fr] lg:gap-6 lg:px-8 lg:pt-20">
+      <div className="relative mx-auto grid min-h-screen max-w-7xl grid-cols-1 items-center gap-8 px-5 pb-6 pt-20 sm:gap-10 sm:px-6 sm:pb-16 sm:pt-24 lg:grid-cols-[1.05fr_1fr] lg:gap-6 lg:px-8 lg:pt-20">
         {/* Portrait logo, shown first on mobile */}
         <div
-          className="relative mx-auto aspect-square w-full max-w-[min(88vw,520px)] lg:order-2"
+          className="relative mx-auto mb-6 aspect-square w-full max-w-[min(74vw,520px)] sm:max-w-[min(80vw,520px)] lg:order-2 lg:mb-0"
           style={{ perspective: 1200 }}
           onPointerMove={handleMove}
           onPointerLeave={() => {
@@ -113,28 +113,28 @@ export function HeroSection() {
           animate="show"
           style={{ perspective: 800 }}
         >
-          <motion.p variants={flipUp} className="inline-flex items-center gap-2 rounded-full border border-brand/30 bg-brand/10 px-4 py-1.5 text-[11px] uppercase tracking-[0.3em] text-brand-glow">
+          <motion.p variants={flipUp} className="inline-flex items-center gap-2 rounded-full border border-brand/30 bg-brand/10 px-4 py-1.5 text-[10px] uppercase tracking-[0.25em] text-brand-glow sm:text-[11px] sm:tracking-[0.3em]">
             <span className="h-1.5 w-1.5 rounded-full bg-brand-glow shadow-[0_0_8px_var(--brand)]" />
             Photographer &amp; Filmmaker
           </motion.p>
           <motion.h1
             variants={flipUp}
-            className="mt-6 font-serif text-4xl leading-[1.1] text-white sm:text-5xl lg:text-6xl"
+            className="mt-5 font-serif text-[2.1rem] leading-[1.1] text-white sm:mt-6 sm:text-5xl lg:text-6xl"
           >
             Wedding, Portrait &amp; Event{' '}
             <span className="bg-gradient-to-r from-brand-glow via-brand to-brand-deep bg-clip-text italic text-transparent">
               Photography
             </span>
           </motion.h1>
-          <motion.p variants={flipUp} className="mt-5 text-lg text-white/75 sm:text-xl">
+          <motion.p variants={flipUp} className="mt-4 text-base text-white/75 sm:mt-5 sm:text-xl">
             {SITE_TAGLINE}
           </motion.p>
-          <motion.p variants={flipUp} className="mt-4 text-sm leading-7 text-white/55 sm:text-base">
+          <motion.p variants={flipUp} className="mt-4 hidden text-sm leading-7 text-white/55 sm:block sm:text-base">
             Cinematic storytelling for weddings, pre-wedding shoots, haldi, sangeeth, portraits and
             milestone events, captured with emotion and detail.
           </motion.p>
 
-          <motion.div variants={flipUp} className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center lg:justify-start">
+          <motion.div variants={flipUp} className="mt-7 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:justify-center lg:justify-start">
             <motion.a
               href={whatsappLink('Hi Vijay! I would like to check your availability for my event.')}
               target="_blank"
@@ -156,7 +156,7 @@ export function HeroSection() {
             </motion.a>
           </motion.div>
 
-          <motion.dl variants={flipUp} className="mt-10 grid grid-cols-3 divide-x divide-white/10 rounded-2xl border border-white/10 bg-white/[0.03] py-4">
+          <motion.dl variants={flipUp} className="mt-8 grid sm:mt-10 grid-cols-3 divide-x divide-white/10 rounded-2xl border border-white/10 bg-white/[0.03] py-4">
             {STATS.map((stat) => (
               <div key={stat.label} className="px-3 text-center">
                 <dt className="sr-only">{stat.label}</dt>

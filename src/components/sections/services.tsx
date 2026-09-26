@@ -6,17 +6,17 @@ import { cn } from '@/lib/utils';
 
 export function ServicesSection() {
   return (
-    <section id="services" className="bg-black py-20 md:py-28">
+    <section id="services" className="bg-black py-14 sm:py-20 md:py-28">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <Reveal3D className="mb-14 text-center">
+        <Reveal3D className="mb-8 text-center sm:mb-14">
           <p className="text-xs uppercase tracking-[0.4em] text-brand">Packages</p>
-          <h2 className="mt-4 font-serif text-4xl text-white md:text-5xl">Pick what fits your day</h2>
+          <h2 className="mt-4 font-serif text-3xl text-white sm:text-4xl md:text-5xl">Pick what fits your day</h2>
           <p className="mx-auto mt-4 max-w-2xl text-white/60">
             Every package can be customised. Tap “Get a quote” and we&apos;ll reply on WhatsApp with pricing for your date.
           </p>
         </Reveal3D>
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-3">
           {SERVICES.map((service, index) => {
             const features = service.description.split(',').map((item) => item.trim());
             const isPremium = index === SERVICES.length - 1;
@@ -26,7 +26,7 @@ export function ServicesSection() {
                 <TiltCard className="h-full rounded-3xl" maxTilt={6}>
                   <div
                     className={cn(
-                      'flex h-full flex-col rounded-3xl border p-8',
+                      'flex h-full flex-col rounded-3xl border p-6 sm:p-8',
                       isPremium
                         ? 'border-brand/50 bg-gradient-to-b from-brand/15 to-white/[0.02] shadow-[0_0_60px_rgba(47,155,255,0.15)]'
                         : 'border-white/10 bg-white/[0.03]',
@@ -68,7 +68,7 @@ export function ServicesSection() {
 
         <p className="mt-12 text-center text-white/55">
           Need something different?{' '}
-          <a href="#contact" className="text-brand-glow underline decoration-brand/50 underline-offset-4 hover:text-white">
+          <a href="#contact" className="inline-block py-2 text-brand-glow underline decoration-brand/50 underline-offset-4 hover:text-white">
             Tell us about your event
           </a>
         </p>

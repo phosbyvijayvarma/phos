@@ -90,9 +90,9 @@ export function FilmStripSection() {
   const sectionRef = useRef<HTMLElement>(null);
 
   return (
-    <section ref={sectionRef} aria-label="Film strip of recent work" className="relative h-[340px] overflow-hidden bg-black sm:h-[420px]" style={{ perspective: 1200 }}>
+    <section ref={sectionRef} aria-label="Film strip of recent work" className="relative h-[290px] overflow-hidden bg-black sm:h-[420px]" style={{ perspective: 1200 }}>
       <div className="absolute inset-0" style={{ transformStyle: 'preserve-3d', transform: 'rotateX(18deg)' }}>
-        <Strip sectionRef={sectionRef} frames={pickFrames(0)} baseSpeed={-2} frameOffset={1} className="top-[14%] -rotate-[5deg]" />
+        <Strip sectionRef={sectionRef} frames={pickFrames(0)} baseSpeed={-2} frameOffset={1} className="top-[8%] -rotate-[5deg] sm:top-[14%]" />
         <Strip sectionRef={sectionRef} frames={pickFrames(1)} baseSpeed={1.5} frameOffset={24} className="top-[46%] rotate-[4deg]" />
       </div>
       <div aria-hidden className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,black,transparent_15%,transparent_85%,black)]" />

@@ -49,14 +49,15 @@ export function ViewfinderHUD({ focusX, focusY, active = true }: ViewfinderHUDPr
         REC <span ref={timecodeRef} className="tabular-nums text-white/60">00:00:00:00</span>
       </div>
       <div className="absolute right-3 top-3 flex items-center gap-2 text-white/60">
-        4K · 24P
+        <span className="hidden sm:inline">4K · 24P</span>
         <span className="flex h-2.5 w-5 items-center gap-px rounded-[2px] border border-white/60 p-px">
           <span className="h-full flex-1 bg-brand-glow" />
           <span className="h-full flex-1 bg-brand-glow" />
           <span className="h-full flex-1 bg-brand-glow/30" />
         </span>
       </div>
-      <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-4 whitespace-nowrap text-white/60">
+      {/* Sits just below the frame so it never collides with the artwork's own lettering. */}
+      <div className="absolute left-1/2 top-full mt-3 flex -translate-x-1/2 gap-4 whitespace-nowrap text-white/60">
         <span>ISO 400</span>
         <span className="text-brand-glow">f/1.8</span>
         <span>1/250</span>
@@ -66,7 +67,7 @@ export function ViewfinderHUD({ focusX, focusY, active = true }: ViewfinderHUDPr
       <motion.div className="absolute inset-0" style={{ x: layerX, y: layerY, willChange: 'transform' }}>
         <div className="absolute left-0 top-0 h-14 w-14 -translate-x-1/2 -translate-y-1/2">
           <div className="loop-breathe h-full w-full border border-brand-glow shadow-[0_0_12px_rgba(47,155,255,0.6)]" />
-          <span className="absolute -top-4 left-0 text-[9px] text-brand-glow">AF-C ●</span>
+          <span className="absolute -top-4 left-0 hidden text-[9px] text-brand-glow sm:block">AF-C ●</span>
         </div>
       </motion.div>
     </div>

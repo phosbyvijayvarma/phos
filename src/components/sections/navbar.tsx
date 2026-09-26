@@ -90,7 +90,7 @@ export function Navbar() {
         <div className="flex items-center gap-2">
           <a
             href="#contact"
-            className="hidden rounded-full bg-brand px-5 py-2.5 text-xs font-semibold uppercase tracking-widest text-black shadow-[0_0_24px_rgba(47,155,255,0.35)] transition hover:bg-brand-glow sm:inline-flex"
+            className="hidden min-h-10 items-center rounded-full bg-brand px-5 py-2.5 text-xs font-semibold uppercase tracking-widest text-black shadow-[0_0_24px_rgba(47,155,255,0.35)] transition hover:bg-brand-glow sm:inline-flex"
           >
             Book Now
           </a>
@@ -99,7 +99,7 @@ export function Navbar() {
           <div className="lg:hidden">
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="text-white hover:bg-white/10 hover:text-white" aria-label="Open menu">
+                <Button variant="ghost" size="icon" className="h-11 w-11 text-white hover:bg-white/10 hover:text-white" aria-label="Open menu">
                   <Menu className="h-6 w-6" />
                 </Button>
               </SheetTrigger>

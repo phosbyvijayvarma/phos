@@ -1,22 +1,49 @@
+import { useEffect, useState } from 'react';
+import { whatsappLink } from '@/lib/constants';
+
+/** Hidden while the contact section or footer is on screen: both already offer WhatsApp and call buttons. */
+function useHideNearContact() {
+  const [hidden, setHidden] = useState(false);
+
+  useEffect(() => {
+    const targets = [document.getElementById('contact'), document.querySelector('footer')].filter(Boolean) as Element[];
+    const visible = new Set<Element>();
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => (entry.isIntersecting ? visible.add(entry.target) : visible.delete(entry.target)));
+      setHidden(visible.size > 0);
+    });
+    targets.forEach((target) => observer.observe(target));
+    return () => observer.disconnect();
+  }, []);
+
+  return hidden;
+}
+
 export function WhatsAppChatButton() {
-  const phone = '917799558146';
-  const url = `https://wa.me/${phone}?text=${encodeURIComponent('Hi! I am interested in your photography services.')}`;
+  const url = whatsappLink();
+  const hidden = useHideNearContact();
 
   return (
-    <div className="fixed right-5 bottom-5 z-50 sm:right-6 sm:bottom-6">
+    <div
+      className={`fixed right-4 bottom-4 z-50 transition-all duration-300 sm:right-6 sm:bottom-6 ${
+        hidden ? 'pointer-events-none translate-y-4 opacity-0' : 'opacity-100'
+      }`}
+      aria-hidden={hidden}
+    >
       <a
         href={url}
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Chat on WhatsApp"
         title="Chat with us"
-        className="group relative inline-flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-[0_18px_40px_rgba(37,211,102,0.25)] transition-transform duration-200 hover:-translate-y-1 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
+        tabIndex={hidden ? -1 : undefined}
+        className="group relative inline-flex h-12 w-12 items-center justify-center rounded-full bg-[#25D366] text-white shadow-[0_18px_40px_rgba(37,211,102,0.25)] transition-transform duration-200 hover:-translate-y-1 hover:scale-105 sm:h-14 sm:w-14 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
       >
         <span className="pointer-events-none absolute inset-0 rounded-full bg-[#25D366]/25 animate-pulse" />
         <span className="pointer-events-none absolute inset-0 rounded-full bg-[#25D366]/40 blur-sm" />
 
         <svg
-          className="relative h-7 w-7"
+          className="relative h-6 w-6 sm:h-7 sm:w-7"
           viewBox="0 0 24 24"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"

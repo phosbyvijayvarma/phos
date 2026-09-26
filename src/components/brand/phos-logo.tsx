@@ -94,9 +94,10 @@ export function PhosLogo({ className, withByline = false, glow = true }: PhosLog
         </g>
       </svg>
       {withByline && (
-        <span className="mt-[0.35em] flex w-full items-center gap-2 text-[0.28em] font-medium uppercase tracking-[0.35em] text-white/80">
+        // Sized to sit within the wordmark's width (3em), so the logo stays centred.
+        <span className="mt-[0.35em] flex w-full items-center gap-[0.6em] whitespace-nowrap text-[0.19em] font-medium uppercase tracking-[0.32em] text-white/80">
           <span className="h-px flex-1 bg-gradient-to-r from-transparent to-brand/70" />
-          By Vijay Varma
+          <span className="-mr-[0.32em]">By Vijay Varma</span>
           <span className="h-px flex-1 bg-gradient-to-l from-transparent to-brand/70" />
         </span>
       )}

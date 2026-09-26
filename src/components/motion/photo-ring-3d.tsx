@@ -147,7 +147,7 @@ export function PhotoRing3D({ photos, onSelect }: PhotoRing3DProps) {
         ref={containerRef}
         data-cursor="Drag"
         className="relative flex w-full cursor-grab touch-pan-y select-none items-center justify-center active:cursor-grabbing"
-        style={{ height: cardHeight * 1.9, perspective: 1100 }}
+        style={{ height: cardHeight * (containerWidth < 640 ? 1.6 : 1.9), perspective: 1100 }}
         onPointerEnter={handleEnter}
         onPointerLeave={handleLeave}
         onPointerDown={handlePointerDown}

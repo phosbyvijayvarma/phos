@@ -19,12 +19,12 @@ export function TestimonialsSection() {
   const current = TESTIMONIALS[currentIndex];
 
   return (
-    <section id="reviews" className="py-20 md:py-28 bg-black">
+    <section id="reviews" className="py-14 sm:py-20 md:py-28 bg-black">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <Reveal3D className="mb-14 text-center">
+        <Reveal3D className="mb-8 text-center sm:mb-14">
           <p className="text-xs uppercase tracking-[0.4em] text-brand">Reviews</p>
-          <h2 className="mt-4 font-serif text-4xl text-white md:text-5xl">Kind words from our couples</h2>
+          <h2 className="mt-4 font-serif text-3xl text-white sm:text-4xl md:text-5xl">Kind words from our couples</h2>
         </Reveal3D>
 
         {/* Testimonial Carousel */}
@@ -32,10 +32,10 @@ export function TestimonialsSection() {
           {/* Testimonial Content */}
           <div className="text-center">
             {/* Quote Mark */}
-            <div className="text-7xl text-brand/40 mb-8 font-serif">&ldquo;</div>
+            <div className="font-serif text-6xl leading-none text-brand/40 sm:mb-4 sm:text-7xl">&ldquo;</div>
 
             {/* Testimonial Text */}
-            <p className="text-2xl md:text-3xl text-white/90 font-light leading-relaxed mb-12">
+            <p className="mb-8 text-lg font-light leading-relaxed text-white/90 sm:mb-12 sm:text-2xl md:text-3xl">
               {current.content}
             </p>
 
@@ -66,7 +66,7 @@ export function TestimonialsSection() {
           </div> */}
 
           {/* Navigation Buttons */}
-          <div className="flex justify-center gap-6 mt-12">
+          <div className="mt-8 flex justify-center gap-6 sm:mt-12">
             <Button
               variant="ghost"
               size="icon"
@@ -89,16 +89,22 @@ export function TestimonialsSection() {
         </div>
 
         {/* Dot Indicators */}
-        <div className="flex justify-center gap-2 mt-12">
+        <div className="mt-4 flex justify-center sm:mt-8">
           {TESTIMONIALS.map((_, index) => (
             <button
               key={index}
+              type="button"
               onClick={() => setCurrentIndex(index)}
-              className={`w-2 h-2 rounded-full transition-colors ${
-                index === currentIndex ? 'bg-brand' : 'bg-white/30 hover:bg-white/50'
-              }`}
+              className="group flex h-11 w-11 items-center justify-center"
               aria-label={`Go to testimonial ${index + 1}`}
-            />
+              aria-current={index === currentIndex}
+            >
+              <span
+                className={`h-2 rounded-full transition-all ${
+                  index === currentIndex ? 'w-6 bg-brand' : 'w-2 bg-white/30 group-hover:bg-white/50'
+                }`}
+              />
+            </button>
           ))}
         </div>
       </div>

@@ -52,7 +52,7 @@ export function PortfolioGallerySection() {
   ];
 
   return (
-    <section id="portfolio" className="relative bg-black py-20 md:py-28">
+    <section id="portfolio" className="relative bg-black py-14 sm:py-20 md:py-28">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid items-center gap-10 lg:grid-cols-[1fr_1.2fr]">
           <Reveal3D>
@@ -65,72 +65,75 @@ export function PortfolioGallerySection() {
           <PhotoRing3D photos={PORTFOLIO_CATEGORIES} onSelect={(id) => selectCategory(id, true)} />
         </div>
 
-        {/* Filters */}
-        <div
-          ref={filtersRef}
-          className="sticky top-16 z-30 -mx-4 mt-12 scroll-mt-16 border-y border-white/10 bg-black/95 px-4 py-3 sm:mx-0 sm:bg-black/80 sm:backdrop-blur-md sm:rounded-full sm:border sm:px-3"
-        >
-          <div role="tablist" aria-label="Filter photos by story" className="flex gap-2 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            {filters.map((filter) => {
-              const isActive = selectedCategory === filter.id;
+        {/* Filters + grid share a wrapper so the sticky bar lets go before the "Show more" button. */}
+        <div>
+          <div
+            ref={filtersRef}
+            className="sticky top-16 z-30 -mx-4 mt-8 sm:mt-12 scroll-mt-16 border-y border-white/10 bg-black/95 px-4 py-3 sm:mx-0 sm:bg-black/80 sm:backdrop-blur-md sm:rounded-full sm:border sm:px-3"
+          >
+            <div role="tablist" aria-label="Filter photos by story" className="-mr-4 flex gap-2 overflow-x-auto pr-8 [mask-image:linear-gradient(to_right,black_85%,transparent)] [scrollbar-width:none] sm:mr-0 sm:pr-0 sm:[mask-image:none] [&::-webkit-scrollbar]:hidden">
+              {filters.map((filter) => {
+                const isActive = selectedCategory === filter.id;
+                return (
+                  <button
+                    key={filter.name}
+                    type="button"
+                    role="tab"
+                    aria-selected={isActive}
+                    onClick={() => selectCategory(filter.id)}
+                    className={cn(
+                      'relative min-h-11 shrink-0 rounded-full px-4 py-2 text-sm transition-colors',
+                      isActive ? 'text-black' : 'text-white/65 hover:bg-white/5 hover:text-white',
+                    )}
+                  >
+                    {isActive && (
+                      <motion.span layoutId="portfolio-filter" className="absolute inset-0 rounded-full bg-brand" transition={{ type: 'spring', stiffness: 400, damping: 32 }} />
+                    )}
+                    <span className="relative">
+                      {filter.name} <span className={isActive ? 'text-black/60' : 'text-white/35'}>{filter.count}</span>
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Masonry grid */}
+          <div className="mt-5 columns-2 gap-3 sm:mt-8 sm:gap-4 md:columns-3 lg:columns-4">
+            {shown.map((image, index) => {
+              const info = getImageInfo(image.src);
               return (
-                <button
-                  key={filter.name}
+                <motion.button
+                  key={`${selectedCategory ?? 'all'}-${image.id}`}
                   type="button"
-                  role="tab"
-                  aria-selected={isActive}
-                  onClick={() => selectCategory(filter.id)}
-                  className={cn(
-                    'relative shrink-0 rounded-full px-4 py-2 text-sm transition-colors',
-                    isActive ? 'text-black' : 'text-white/65 hover:bg-white/5 hover:text-white',
-                  )}
+                  initial={{ opacity: 0, y: 24, rotateX: -12 }}
+                  whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
+                  viewport={{ once: true, margin: '0px 0px -40px 0px' }}
+                  transition={{ duration: 0.6, delay: (index % 4) * 0.05, ease: [0.22, 1, 0.36, 1] }}
+                  style={{ transformPerspective: 1000 }}
+                  onClick={() => setLightboxIndex(index)}
+                  data-cursor="View"
+                  aria-label={`Open ${CATEGORY_NAMES[image.category]} photo ${index + 1} full screen`}
+                  className="group relative mb-3 block w-full break-inside-avoid overflow-hidden rounded-2xl border border-white/10 bg-white/5 sm:mb-4"
                 >
-                  {isActive && (
-                    <motion.span layoutId="portfolio-filter" className="absolute inset-0 rounded-full bg-brand" transition={{ type: 'spring', stiffness: 400, damping: 32 }} />
-                  )}
-                  <span className="relative">
-                    {filter.name} <span className={isActive ? 'text-black/60' : 'text-white/35'}>{filter.count}</span>
-                  </span>
-                </button>
+                  <img
+                    src={info.thumb}
+                    width={info.width}
+                    height={info.height}
+                    alt={`${CATEGORY_NAMES[image.category]} photography by PHOS BY VIJAYVARMA`}
+                    loading="lazy"
+                    decoding="async"
+                    className="h-auto w-full bg-white/5 transition-transform duration-700 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 flex items-end justify-between bg-gradient-to-t from-black/70 via-transparent to-transparent p-3 opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100">
+                    <span className="text-xs uppercase tracking-[0.2em] text-white">{CATEGORY_NAMES[image.category]}</span>
+                    <Maximize2 className="h-4 w-4 text-white" />
+                  </div>
+                </motion.button>
               );
             })}
           </div>
-        </div>
 
-        {/* Masonry grid */}
-        <div className="mt-8 columns-2 gap-3 sm:gap-4 md:columns-3 lg:columns-4">
-          {shown.map((image, index) => {
-            const info = getImageInfo(image.src);
-            return (
-              <motion.button
-                key={`${selectedCategory ?? 'all'}-${image.id}`}
-                type="button"
-                initial={{ opacity: 0, y: 24, rotateX: -12 }}
-                whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
-                viewport={{ once: true, margin: '0px 0px -40px 0px' }}
-                transition={{ duration: 0.6, delay: (index % 4) * 0.05, ease: [0.22, 1, 0.36, 1] }}
-                style={{ transformPerspective: 1000 }}
-                onClick={() => setLightboxIndex(index)}
-                data-cursor="View"
-                aria-label={`Open ${CATEGORY_NAMES[image.category]} photo ${index + 1} full screen`}
-                className="group relative mb-3 block w-full break-inside-avoid overflow-hidden rounded-2xl border border-white/10 bg-white/5 sm:mb-4"
-              >
-                <img
-                  src={info.thumb}
-                  width={info.width}
-                  height={info.height}
-                  alt={`${CATEGORY_NAMES[image.category]} photography by PHOS BY VIJAYVARMA`}
-                  loading="lazy"
-                  decoding="async"
-                  className="h-auto w-full bg-white/5 transition-transform duration-700 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 flex items-end justify-between bg-gradient-to-t from-black/70 via-transparent to-transparent p-3 opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100">
-                  <span className="text-xs uppercase tracking-[0.2em] text-white">{CATEGORY_NAMES[image.category]}</span>
-                  <Maximize2 className="h-4 w-4 text-white" />
-                </div>
-              </motion.button>
-            );
-          })}
         </div>
 
         <div className="mt-10 flex flex-col items-center gap-3">

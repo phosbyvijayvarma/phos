@@ -20,7 +20,7 @@ const QUICK_CONTACTS = [
 ];
 
 const inputClass =
-  'w-full rounded-xl border border-white/15 bg-white/[0.04] px-4 py-3 text-white placeholder:text-white/35 outline-none transition focus:border-brand focus:bg-white/[0.06] focus:ring-2 focus:ring-brand/30';
+  'w-full rounded-xl border border-white/15 bg-white/[0.04] px-4 py-3 text-base text-white placeholder:text-white/35 outline-none transition focus:border-brand focus:bg-white/[0.06] focus:ring-2 focus:ring-brand/30';
 
 export function ContactSection() {
   const [form, setForm] = useState({ name: '', eventType: EVENT_TYPES[0], date: '', location: '', notes: '' });
@@ -44,13 +44,13 @@ export function ContactSection() {
   const whatsappQr = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=8&data=${encodeURIComponent(whatsappLink())}`;
 
   return (
-    <section id="contact" className="relative overflow-hidden bg-black py-20 md:py-28">
+    <section id="contact" className="relative overflow-hidden bg-black py-14 sm:py-20 md:py-28">
       <div aria-hidden className="pointer-events-none absolute -bottom-40 left-1/2 h-[60vmin] w-[90vmin] -translate-x-1/2 rounded-full bg-brand/10 blur-[120px]" />
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <Reveal3D className="mb-12 text-center">
+        <Reveal3D className="mb-8 text-center sm:mb-12">
           <p className="text-xs uppercase tracking-[0.4em] text-brand">Book a shoot</p>
-          <h2 className="mt-4 font-serif text-4xl text-white md:text-5xl">Let&apos;s capture your day</h2>
+          <h2 className="mt-4 font-serif text-3xl text-white sm:text-4xl md:text-5xl">Let&apos;s capture your day</h2>
           <p className="mx-auto mt-4 max-w-xl text-white/60">
             Share a few details and we&apos;ll confirm availability and pricing on WhatsApp.
           </p>
@@ -61,7 +61,7 @@ export function ContactSection() {
           <Reveal3D>
             <form
               onSubmit={handleSubmit}
-              className="grid gap-4 rounded-3xl border border-white/10 bg-white/[0.03] p-6 sm:grid-cols-2 sm:p-8"
+              className="grid gap-4 rounded-3xl border border-white/10 bg-white/[0.03] p-5 sm:grid-cols-2 sm:p-8"
             >
               <label className="grid gap-2 text-sm text-white/70 sm:col-span-2">
                 Your name
@@ -84,7 +84,9 @@ export function ContactSection() {
                 <input value={form.location} onChange={update('location')} placeholder="Where is the event?" className={inputClass} />
               </label>
               <label className="grid gap-2 text-sm text-white/70 sm:col-span-2">
-                Anything else? <span className="text-white/35">(optional)</span>
+                <span>
+                  Anything else? <span className="text-white/35">(optional)</span>
+                </span>
                 <textarea value={form.notes} onChange={update('notes')} rows={3} placeholder="Number of days, package you like, ideas…" className={`${inputClass} resize-none`} />
               </label>
               <button

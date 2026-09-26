@@ -31,7 +31,7 @@ const CORNERS = [
 
 export function AboutSection() {
   return (
-    <section id="about" className="relative overflow-hidden bg-black py-20 md:py-28">
+    <section id="about" className="relative overflow-hidden bg-black py-14 sm:py-20 md:py-28">
       <div aria-hidden className="pointer-events-none absolute left-[-15%] top-1/3 h-[60vmin] w-[60vmin] rounded-full bg-brand/10 blur-[120px]" />
 
       <div className="relative mx-auto grid max-w-7xl items-center gap-14 px-4 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20 lg:px-8">
